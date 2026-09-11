@@ -4,6 +4,7 @@ use App\Enums\TipoPerfil;
 use App\Models\Bitacora;
 use App\Models\Categoria;
 use App\Models\Estacion;
+use App\Models\Informe;
 use App\Models\Parametro;
 use App\Models\Usuario;
 use App\Models\ZonaTuristica;
@@ -22,6 +23,7 @@ test('las policies aplican la matriz completa de acceso por perfil', function (T
         'preferencias' => Gate::forUser($usuario)->allows('seleccionar', Categoria::class),
         'parametros' => Gate::forUser($usuario)->allows('administrar', Parametro::class),
         'sincronizacion' => Gate::forUser($usuario)->allows('administrar', Bitacora::class),
+        'informes_propios' => Gate::forUser($usuario)->allows('gestionarPropios', Informe::class),
     ];
 
     expect($permisos)->toBe($permisosEsperados);
@@ -36,6 +38,7 @@ test('las policies aplican la matriz completa de acceso por perfil', function (T
         'preferencias' => true,
         'parametros' => false,
         'sincronizacion' => false,
+        'informes_propios' => true,
     ]],
     'travel group' => [TipoPerfil::TravelGroup, [
         'zonas' => true,
@@ -47,6 +50,7 @@ test('las policies aplican la matriz completa de acceso por perfil', function (T
         'preferencias' => false,
         'parametros' => false,
         'sincronizacion' => false,
+        'informes_propios' => false,
     ]],
     'administrador mtc' => [TipoPerfil::AdministradorMtc, [
         'zonas' => false,
@@ -58,5 +62,6 @@ test('las policies aplican la matriz completa de acceso por perfil', function (T
         'preferencias' => false,
         'parametros' => true,
         'sincronizacion' => true,
+        'informes_propios' => false,
     ]],
 ]);

@@ -124,5 +124,19 @@
                 </flux:card>
             </section>
         </div>
+
+        @if ($mensajeInforme)
+            <flux:callout variant="success" icon="check-circle" :heading="$mensajeInforme" />
+        @endif
+
+        @error('general')
+            <flux:callout variant="danger" icon="exclamation-triangle" :heading="$message" />
+        @enderror
+
+        <div class="flex justify-end">
+            <flux:button wire:click="generarInforme" wire:loading.attr="disabled" wire:target="generarInforme" variant="primary" icon="document-plus">
+                Guardar informe
+            </flux:button>
+        </div>
     @endif
 </div>

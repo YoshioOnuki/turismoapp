@@ -23,6 +23,7 @@
             icono="document-text"
             titulo="Mis informes"
             descripcion="Revisa y descarga los informes que generaste."
+            :href="route('turista.informes')"
         />
     </div>
 </div>

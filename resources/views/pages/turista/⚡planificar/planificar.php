@@ -1,9 +1,11 @@
 <?php
 
 use App\Models\Estacion;
+use App\Models\Informe;
 use App\Models\Usuario;
 use App\Models\ZonaTuristica;
 use App\Services\PlanificacionService;
+use App\Services\InformeService;
 use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
@@ -26,6 +28,7 @@ new #[Title('Planificar mi visita')] class extends Component
 
     public string $estacionCodigo = '';
     public bool $busquedaRealizada = false;
+    public ?string $mensajeInforme = null;
 
     public function mount(PlanificacionService $planificacion): void
     {
@@ -51,6 +54,26 @@ new #[Title('Planificar mi visita')] class extends Component
         $this->trenes = $informacion['trenes'];
         $this->clima = $informacion['clima'];
         $this->busquedaRealizada = true;
+    }
+
+    public function generarInforme(InformeService $informes): void
+    {
+        Gate::authorize('gestionarPropios', Informe::class);
+        $datos = $this->validate([
+            'estacionCodigo' => [
+                'required',
+                'integer',
+                Rule::exists('tb_estacion', 'est_codigo')->where(fn (Builder $consulta) => $consulta->where('est_estado', true)),
+            ],
+        ]);
+
+        try {
+            $informes->generar($this->usuario(), (int) $datos['estacionCodigo']);
+            $this->mensajeInforme = 'Informe guardado en tu historial.';
+        } catch (Throwable $excepcion) {
+            report($excepcion);
+            $this->addError('general', 'No fue posible guardar el informe.');
+        }
     }
 
     private function usuario(): Usuario

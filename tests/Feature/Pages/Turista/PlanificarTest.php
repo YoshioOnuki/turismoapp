@@ -27,7 +27,15 @@ test('el turista selecciona una estación y consulta sus zonas disponibles', fun
         ->assertHasNoErrors()
         ->assertSee('Mirador del Valle')
         ->assertSee('Trenes que llegan a la estación')
-        ->assertSee('Pronóstico del clima');
+        ->assertSee('Pronóstico del clima')
+        ->call('generarInforme')
+        ->assertHasNoErrors()
+        ->assertSee('Informe guardado en tu historial.');
+
+    $this->assertDatabaseHas('tb_informe', [
+        'inf_usu_codigo' => $turista->getKey(),
+        'inf_est_codigo' => $estacion->getKey(),
+    ]);
 });
 
 test('avisa cuando no hay zonas que coincidan', function () {

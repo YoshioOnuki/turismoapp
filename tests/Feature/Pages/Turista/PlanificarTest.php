@@ -25,7 +25,9 @@ test('el turista selecciona una estación y consulta sus zonas disponibles', fun
         ->set('estacionCodigo', (string) $estacion->getKey())
         ->call('buscar')
         ->assertHasNoErrors()
-        ->assertSee('Mirador del Valle');
+        ->assertSee('Mirador del Valle')
+        ->assertSee('Trenes que llegan a la estación')
+        ->assertSee('Pronóstico del clima');
 });
 
 test('avisa cuando no hay zonas que coincidan', function () {

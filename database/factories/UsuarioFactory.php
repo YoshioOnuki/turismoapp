@@ -44,4 +44,14 @@ class UsuarioFactory extends Factory
             'usu_per_codigo' => $perfil->value,
         ]);
     }
+
+    /**
+     * Indica que el administrador dio de baja al usuario (RF-19).
+     */
+    public function inactivo(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'usu_estado' => false,
+        ]);
+    }
 }

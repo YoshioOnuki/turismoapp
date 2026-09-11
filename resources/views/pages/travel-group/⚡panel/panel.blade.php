@@ -9,6 +9,7 @@
             icono="map-pin"
             titulo="Zonas turísticas"
             descripcion="Registra, edita y da de baja las zonas turísticas."
+            :href="route('travel-group.zonas')"
         />
 
         <x-tarjeta-modulo

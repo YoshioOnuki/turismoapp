@@ -9,6 +9,7 @@
             icono="users"
             titulo="Usuarios"
             descripcion="Da de alta, da de baja y cambia el perfil de los usuarios."
+            :href="route('administracion.usuarios')"
         />
 
         <x-tarjeta-modulo

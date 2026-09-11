@@ -9,15 +9,19 @@ use App\Models\Bitacora;
 use App\Models\Clima;
 use App\Models\Estacion;
 use App\Models\Horario;
+use App\Models\Parametro;
 use App\Models\Usuario;
 use DateTimeInterface;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Throwable;
 use UnexpectedValueException;
 
-final class SincronizacionService
+class SincronizacionService
 {
+    public const FRECUENCIA_PREDETERMINADA = 24;
+
     public function __construct(
         private FuentePeruRail $peruRail,
         private FuenteSenamhi $senamhi,
@@ -34,6 +38,42 @@ final class SincronizacionService
         return [
             FuenteDatos::PeruRail->value => $this->sincronizarPeruRail($tipo, $usuario),
             FuenteDatos::Senamhi->value => $this->sincronizarSenamhi($tipo, $usuario),
+        ];
+    }
+
+    /**
+     * Ejecuta únicamente las fuentes que superaron la frecuencia configurada.
+     * Una ejecución manual exitosa también renueva la vigencia de sus datos.
+     *
+     * @return array{perurail?: Bitacora, senamhi?: Bitacora}
+     */
+    public function ejecutarAutomaticamenteSiCorresponde(): array
+    {
+        $frecuencia = $this->frecuenciaEnHoras();
+        $resultados = [];
+
+        if ($this->requiereActualizacion(FuenteDatos::PeruRail, $frecuencia)) {
+            $resultados[FuenteDatos::PeruRail->value] = $this->sincronizarPeruRail(TipoSincronizacion::Automatica, null);
+        }
+
+        if ($this->requiereActualizacion(FuenteDatos::Senamhi, $frecuencia)) {
+            $resultados[FuenteDatos::Senamhi->value] = $this->sincronizarSenamhi(TipoSincronizacion::Automatica, null);
+        }
+
+        return $resultados;
+    }
+
+    /**
+     * @return array{
+     *     perurail: array{nombre: string, resultado: ?string, ultima_ejecucion: ?string, ultima_actualizacion: ?string, registros: int},
+     *     senamhi: array{nombre: string, resultado: ?string, ultima_ejecucion: ?string, ultima_actualizacion: ?string, registros: int}
+     * }
+     */
+    public function estadoFuentes(): array
+    {
+        return [
+            FuenteDatos::PeruRail->value => $this->estadoFuente(FuenteDatos::PeruRail, 'PeruRail'),
+            FuenteDatos::Senamhi->value => $this->estadoFuente(FuenteDatos::Senamhi, 'SENAMHI'),
         ];
     }
 
@@ -193,5 +233,56 @@ final class SincronizacionService
             'bit_resultado' => ResultadoSincronizacion::Error,
             'bit_mensaje' => Str::limit($excepcion->getMessage(), 1000),
         ]);
+    }
+
+    private function frecuenciaEnHoras(): int
+    {
+        $valor = Parametro::query()
+            ->where('par_clave', 'frecuencia_sincronizacion')
+            ->value('par_valor');
+
+        if (! is_string($valor) || ! ctype_digit($valor) || (int) $valor < 1) {
+            return self::FRECUENCIA_PREDETERMINADA;
+        }
+
+        return (int) $valor;
+    }
+
+    private function requiereActualizacion(FuenteDatos $fuente, int $frecuencia): bool
+    {
+        $ultimaEjecucion = Bitacora::query()
+            ->where('bit_fuente', $fuente->value)
+            ->where('bit_resultado', ResultadoSincronizacion::Exito->value)
+            ->max('bit_fecha_fin');
+
+        return $ultimaEjecucion === null
+            || Carbon::parse($ultimaEjecucion)->lte(now()->subHours($frecuencia));
+    }
+
+    /**
+     * @return array{nombre: string, resultado: ?string, ultima_ejecucion: ?string, ultima_actualizacion: ?string, registros: int}
+     */
+    private function estadoFuente(FuenteDatos $fuente, string $nombre): array
+    {
+        $ultimoIntento = Bitacora::query()
+            ->where('bit_fuente', $fuente->value)
+            ->latest('bit_fecha_fin')
+            ->latest('bit_codigo')
+            ->first();
+
+        $ultimaActualizacion = Bitacora::query()
+            ->where('bit_fuente', $fuente->value)
+            ->where('bit_resultado', ResultadoSincronizacion::Exito->value)
+            ->max('bit_fecha_fin');
+
+        return [
+            'nombre' => $nombre,
+            'resultado' => $ultimoIntento?->bit_resultado?->value,
+            'ultima_ejecucion' => $ultimoIntento?->bit_fecha_fin?->format('d/m/Y H:i'),
+            'ultima_actualizacion' => $ultimaActualizacion === null
+                ? null
+                : Carbon::parse($ultimaActualizacion)->format('d/m/Y H:i'),
+            'registros' => $ultimoIntento?->bit_registros ?? 0,
+        ];
     }
 }

@@ -4,7 +4,9 @@ use App\Enums\FuenteDatos;
 use App\Enums\ResultadoSincronizacion;
 use App\Enums\TipoPerfil;
 use App\Enums\TipoSincronizacion;
+use App\Models\Bitacora;
 use App\Models\Estacion;
+use App\Models\Parametro;
 use App\Models\Usuario;
 use App\Services\EstacionExterna;
 use App\Services\FuentePeruRail;
@@ -93,4 +95,54 @@ test('conserva los datos previos y registra el error cuando una fuente falla', f
     ]);
     $this->assertDatabaseHas('tb_clima', ['cli_est_codigo' => $estacion->getKey()]);
     Exceptions::assertReported(UnexpectedValueException::class);
+});
+
+test('sincroniza automáticamente solo la fuente cuyos datos perdieron vigencia', function () {
+    $this->travelTo(Carbon::parse('2026-09-11 08:00:00'));
+    Parametro::factory()->create([
+        'par_clave' => 'frecuencia_sincronizacion',
+        'par_valor' => '24',
+    ]);
+    Bitacora::factory()->create([
+        'bit_fuente' => FuenteDatos::PeruRail,
+        'bit_resultado' => ResultadoSincronizacion::Exito,
+        'bit_fecha_fin' => now()->subHours(23),
+    ]);
+    $estacion = Estacion::factory()->create(['est_codigo_externo' => 'WAN']);
+    $this->mock(FuentePeruRail::class)
+        ->shouldNotReceive('obtenerEstaciones', 'obtenerHorarios');
+    $this->mock(FuenteSenamhi::class)
+        ->shouldReceive('obtenerPronosticos')
+        ->once()
+        ->andReturn([new PronosticoExterno('WAN', today()->toDateString(), 7.0, 19.0, 30, 'Nublado')]);
+
+    $resultados = app(SincronizacionService::class)->ejecutarAutomaticamenteSiCorresponde();
+
+    expect($resultados)->toHaveKey(FuenteDatos::Senamhi->value)
+        ->not->toHaveKey(FuenteDatos::PeruRail->value);
+    $this->assertDatabaseHas('tb_clima', ['cli_est_codigo' => $estacion->getKey()]);
+});
+
+test('no sincroniza automáticamente mientras ambas fuentes conservan vigencia', function () {
+    $this->travelTo(Carbon::parse('2026-09-11 08:00:00'));
+    Parametro::factory()->create([
+        'par_clave' => 'frecuencia_sincronizacion',
+        'par_valor' => '24',
+    ]);
+    foreach ([FuenteDatos::PeruRail, FuenteDatos::Senamhi] as $fuente) {
+        Bitacora::factory()->create([
+            'bit_fuente' => $fuente,
+            'bit_resultado' => ResultadoSincronizacion::Exito,
+            'bit_fecha_fin' => now()->subHours(23),
+        ]);
+    }
+    $this->mock(FuentePeruRail::class)
+        ->shouldNotReceive('obtenerEstaciones', 'obtenerHorarios');
+    $this->mock(FuenteSenamhi::class)
+        ->shouldNotReceive('obtenerPronosticos');
+
+    $resultados = app(SincronizacionService::class)->ejecutarAutomaticamenteSiCorresponde();
+
+    expect($resultados)->toBe([]);
+    $this->assertDatabaseCount('tb_bitacora', 2);
 });

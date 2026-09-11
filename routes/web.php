@@ -38,5 +38,6 @@ Route::middleware('auth')->group(function () {
         ->name('administracion.')
         ->group(function () {
             Route::livewire('/', 'pages::administracion.panel')->name('panel');
+            Route::livewire('/sincronizacion', 'pages::administracion.sincronizacion')->name('sincronizacion');
         });
 });

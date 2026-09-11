@@ -21,6 +21,7 @@
             icono="arrow-path"
             titulo="Sincronización"
             descripcion="Revisa la bitácora y ejecuta una sincronización manual."
+            :href="route('administracion.sincronizacion')"
         />
 
         <x-tarjeta-modulo

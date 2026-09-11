@@ -3,6 +3,7 @@
 use App\Enums\TipoPerfil;
 use App\Models\Usuario;
 use App\Services\UsuarioAdministracionService;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Password;
 use Livewire\Attributes\Title;
@@ -22,6 +23,7 @@ new #[Title('Gestión de usuarios')] class extends Component
 
     public function mount(UsuarioAdministracionService $usuarios): void
     {
+        Gate::authorize('administrar', Usuario::class);
         $this->usuarios = $usuarios->listar();
     }
 
@@ -46,6 +48,7 @@ new #[Title('Gestión de usuarios')] class extends Component
 
     public function crear(UsuarioAdministracionService $usuarios): void
     {
+        Gate::authorize('administrar', Usuario::class);
         $datos = $this->validate();
 
         try {
@@ -62,11 +65,13 @@ new #[Title('Gestión de usuarios')] class extends Component
 
     public function cambiarPerfil(int $codigo, int $perfil, UsuarioAdministracionService $usuarios): void
     {
+        Gate::authorize('administrar', Usuario::class);
         $this->ejecutarCambio($usuarios, fn (Usuario $administrador) => $usuarios->cambiarPerfil($codigo, TipoPerfil::from($perfil), $administrador), 'Perfil actualizado.');
     }
 
     public function cambiarEstado(int $codigo, UsuarioAdministracionService $usuarios): void
     {
+        Gate::authorize('administrar', Usuario::class);
         $this->ejecutarCambio($usuarios, fn (Usuario $administrador) => $usuarios->cambiarEstado($codigo, $administrador), 'Estado actualizado.');
     }
 

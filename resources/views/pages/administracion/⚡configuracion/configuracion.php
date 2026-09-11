@@ -1,6 +1,9 @@
 <?php
 
+use App\Models\Categoria;
+use App\Models\Parametro;
 use App\Services\ConfiguracionService;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -27,6 +30,8 @@ new #[Title('Parámetros y categorías')] class extends Component
 
     public function mount(ConfiguracionService $configuracion): void
     {
+        Gate::authorize('administrar', Parametro::class);
+        Gate::authorize('administrar', Categoria::class);
         $this->cargarDatos($configuracion);
     }
 
@@ -45,6 +50,7 @@ new #[Title('Parámetros y categorías')] class extends Component
 
     public function guardarParametro(ConfiguracionService $configuracion): void
     {
+        Gate::authorize('administrar', Parametro::class);
         $codigo = $this->parametroCodigo;
         abort_if($codigo === null, 404);
         $reglas = match ($this->parametroClave) {
@@ -87,6 +93,7 @@ new #[Title('Parámetros y categorías')] class extends Component
 
     public function guardarCategoria(ConfiguracionService $configuracion): void
     {
+        Gate::authorize('administrar', Categoria::class);
         $datos = $this->validate([
             'categoriaNombre' => [
                 'required',
@@ -109,6 +116,8 @@ new #[Title('Parámetros y categorías')] class extends Component
 
     public function cambiarEstadoCategoria(int $codigo, ConfiguracionService $configuracion): void
     {
+        Gate::authorize('administrar', Categoria::class);
+
         try {
             $categoria = $configuracion->cambiarEstadoCategoria($codigo);
             $this->mensaje = $categoria->cat_estado ? 'Categoría reactivada.' : 'Categoría dada de baja.';

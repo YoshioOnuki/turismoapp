@@ -169,7 +169,7 @@ Primero los RF de prioridad Alta (producto mínimo), luego los de prioridad Medi
 - [x] Listado de estaciones en solo lectura para Travel Group Perú (RF-18).
 - [x] Gestión de usuarios para el administrador: alta, baja y cambio de perfil (RF-19).
 - [x] Parámetros generales y catálogo de categorías (RF-20).
-- [ ] Autorización por perfil con policies (RNF-12).
+- [x] Autorización por perfil con policies (RNF-12).
 
 ### Etapa 4 — Consulta del turista (RF-05 a RF-10)
 

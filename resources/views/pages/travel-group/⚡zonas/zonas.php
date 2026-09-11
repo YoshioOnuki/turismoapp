@@ -1,7 +1,9 @@
 <?php
 
 use App\Enums\Dificultad;
+use App\Models\ZonaTuristica;
 use App\Services\ZonaTuristicaService;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -37,6 +39,7 @@ new #[Title('Zonas turísticas')] class extends Component
 
     public function mount(ZonaTuristicaService $zonas): void
     {
+        Gate::authorize('administrar', ZonaTuristica::class);
         $this->cargarDatos($zonas);
     }
 
@@ -59,12 +62,14 @@ new #[Title('Zonas turísticas')] class extends Component
 
     public function crear(): void
     {
+        Gate::authorize('administrar', ZonaTuristica::class);
         $this->limpiarFormulario();
         $this->mostrarFormulario = true;
     }
 
     public function editar(int $codigo): void
     {
+        Gate::authorize('administrar', ZonaTuristica::class);
         $zona = collect($this->zonas)->firstWhere('codigo', $codigo);
         abort_unless(is_array($zona), 404);
         $this->resetErrorBag();
@@ -83,6 +88,7 @@ new #[Title('Zonas turísticas')] class extends Component
 
     public function guardar(ZonaTuristicaService $zonas): void
     {
+        Gate::authorize('administrar', ZonaTuristica::class);
         $datosValidados = $this->validate();
 
         try {
@@ -107,6 +113,8 @@ new #[Title('Zonas turísticas')] class extends Component
 
     public function cambiarEstado(int $codigo, ZonaTuristicaService $zonas): void
     {
+        Gate::authorize('administrar', ZonaTuristica::class);
+
         try {
             $zona = $zonas->cambiarEstado($codigo);
             $this->mensaje = $zona->zon_estado ? 'Zona turística reactivada.' : 'Zona turística dada de baja.';

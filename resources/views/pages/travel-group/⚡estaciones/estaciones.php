@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\Estacion;
 use App\Services\EstacionService;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -11,6 +13,7 @@ new #[Title('Estaciones ferroviarias')] class extends Component
 
     public function mount(EstacionService $estaciones): void
     {
+        Gate::authorize('consultarAdministracion', Estacion::class);
         $this->estaciones = $estaciones->listar();
     }
 };

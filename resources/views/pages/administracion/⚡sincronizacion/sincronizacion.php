@@ -5,6 +5,7 @@ use App\Enums\TipoSincronizacion;
 use App\Models\Bitacora;
 use App\Models\Usuario;
 use App\Services\SincronizacionService;
+use Illuminate\Support\Facades\Gate;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
@@ -21,11 +22,13 @@ new #[Title('Sincronización de datos')] class extends Component
 
     public function mount(SincronizacionService $sincronizacion): void
     {
+        Gate::authorize('administrar', Bitacora::class);
         $this->cargarEstado($sincronizacion);
     }
 
     public function sincronizar(SincronizacionService $sincronizacion): void
     {
+        Gate::authorize('administrar', Bitacora::class);
         $usuario = auth()->user();
         abort_unless($usuario instanceof Usuario, 403);
         $this->resetErrorBag();

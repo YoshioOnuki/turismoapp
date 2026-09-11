@@ -16,6 +16,7 @@
             icono="adjustments-horizontal"
             titulo="Parámetros y categorías"
             descripcion="Configura la distancia máxima caminable, la frecuencia de sincronización y las categorías."
+            :href="route('administracion.configuracion')"
         />
 
         <x-tarjeta-modulo

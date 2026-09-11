@@ -1,7 +1,7 @@
 <?php
 
-test('the application returns a successful response', function () {
+test('redirige la raíz a la página de inicio', function () {
     $response = $this->get('/');
 
-    $response->assertStatus(200);
+    $response->assertRedirectToRoute('inicio');
 });

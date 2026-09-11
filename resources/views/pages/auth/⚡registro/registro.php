@@ -48,7 +48,7 @@ new #[Title('Crear cuenta')] class extends Component
         $this->validate();
 
         try {
-            $autenticacion->registrar($this->nombre, $this->correo, $this->clave);
+            $usuario = $autenticacion->registrar($this->nombre, $this->correo, $this->clave);
         } catch (Throwable $excepcion) {
             report($excepcion);
             $this->addError('general', 'No pudimos crear tu cuenta. Inténtalo de nuevo en unos minutos.');
@@ -56,6 +56,6 @@ new #[Title('Crear cuenta')] class extends Component
             return;
         }
 
-        $this->redirectIntended(route('inicio'), navigate: true);
+        $this->redirectIntended(route($usuario->tipoPerfil()->rutaPanel()), navigate: true);
     }
 };

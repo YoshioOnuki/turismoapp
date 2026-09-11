@@ -43,7 +43,7 @@ new #[Title('Iniciar sesión')] class extends Component
         $this->validate();
 
         try {
-            $autenticacion->iniciarSesion($this->correo, $this->clave, $this->recordar, (string) request()->ip());
+            $usuario = $autenticacion->iniciarSesion($this->correo, $this->clave, $this->recordar, (string) request()->ip());
         } catch (CredencialesInvalidasException) {
             $this->addError('correo', __('auth.failed'));
 
@@ -59,6 +59,6 @@ new #[Title('Iniciar sesión')] class extends Component
             return;
         }
 
-        $this->redirectIntended(route('inicio'), navigate: true);
+        $this->redirectIntended(route($usuario->tipoPerfil()->rutaPanel()), navigate: true);
     }
 };

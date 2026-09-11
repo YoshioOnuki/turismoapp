@@ -1,6 +1,8 @@
 <?php
 
+use App\Enums\TipoPerfil;
 use App\Http\Controllers\Auth\CerrarSesionController;
+use App\Http\Middleware\VerificarPerfil;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/inicio');
@@ -12,6 +14,27 @@ Route::middleware('guest')->group(function () {
     Route::livewire('/registro', 'pages::auth.registro')->name('registro');
 });
 
-Route::post('/cerrar-sesion', CerrarSesionController::class)
-    ->middleware('auth')
-    ->name('logout');
+Route::middleware('auth')->group(function () {
+    Route::post('/cerrar-sesion', CerrarSesionController::class)->name('logout');
+
+    Route::middleware(VerificarPerfil::permitir(TipoPerfil::UsuarioFinal))
+        ->prefix('turista')
+        ->name('turista.')
+        ->group(function () {
+            Route::livewire('/', 'pages::turista.panel')->name('panel');
+        });
+
+    Route::middleware(VerificarPerfil::permitir(TipoPerfil::TravelGroup))
+        ->prefix('travel-group')
+        ->name('travel-group.')
+        ->group(function () {
+            Route::livewire('/', 'pages::travel-group.panel')->name('panel');
+        });
+
+    Route::middleware(VerificarPerfil::permitir(TipoPerfil::AdministradorMtc))
+        ->prefix('administracion')
+        ->name('administracion.')
+        ->group(function () {
+            Route::livewire('/', 'pages::administracion.panel')->name('panel');
+        });
+});

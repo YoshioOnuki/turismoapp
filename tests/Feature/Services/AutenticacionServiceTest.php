@@ -22,11 +22,12 @@ test('registra al turista con el perfil de usuario final y le abre la sesión', 
     Event::assertDispatched(Registered::class);
 });
 
-test('abre la sesión de un usuario activo con su correo y su clave', function () {
+test('abre la sesión de un usuario activo y lo devuelve', function () {
     $usuario = Usuario::factory()->create(['usu_correo' => 'ana@turismoapp.test', 'usu_clave' => 'clave-segura-123']);
 
-    app(AutenticacionService::class)->iniciarSesion('ana@turismoapp.test', 'clave-segura-123', false, '127.0.0.1');
+    $autenticado = app(AutenticacionService::class)->iniciarSesion('ana@turismoapp.test', 'clave-segura-123', false, '127.0.0.1');
 
+    expect($autenticado->is($usuario))->toBeTrue();
     $this->assertAuthenticatedAs($usuario);
 });
 

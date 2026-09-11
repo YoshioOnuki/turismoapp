@@ -52,7 +52,7 @@ class AutenticacionService
      * @throws DemasiadosIntentosException
      * @throws CredencialesInvalidasException
      */
-    public function iniciarSesion(string $correo, string $clave, bool $recordar, string $ip): void
+    public function iniciarSesion(string $correo, string $clave, bool $recordar, string $ip): Usuario
     {
         $llave = Str::transliterate(Str::lower($correo).'|'.$ip);
 
@@ -75,6 +75,11 @@ class AutenticacionService
 
         RateLimiter::clear($llave);
         session()->regenerate();
+
+        /** @var Usuario $usuario */
+        $usuario = Auth::user();
+
+        return $usuario;
     }
 
     /**

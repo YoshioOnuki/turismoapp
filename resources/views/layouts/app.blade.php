@@ -21,8 +21,17 @@
             <flux:spacer />
 
             @auth
+                @php($usuario = auth()->user())
+
+                <flux:navbar class="me-3">
+                    <flux:navbar.item :href="route($usuario->tipoPerfil()->rutaPanel())" wire:navigate>Mi panel</flux:navbar.item>
+                </flux:navbar>
+
                 <div class="flex items-center gap-3">
-                    <flux:text class="hidden sm:block">{{ auth()->user()->usu_nombre }}</flux:text>
+                    <div class="hidden text-end sm:block">
+                        <flux:text variant="strong" class="font-medium">{{ $usuario->usu_nombre }}</flux:text>
+                        <flux:text size="sm">{{ $usuario->tipoPerfil()->etiqueta() }}</flux:text>
+                    </div>
 
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf

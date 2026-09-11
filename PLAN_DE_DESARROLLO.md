@@ -122,6 +122,21 @@ public function iniciarSesion(AutenticacionService $autenticacion): void
 - Rama principal: `main`. Commits pequeños, en español y en imperativo ("Agrega...", "Corrige...").
 - Recomendado: una rama por funcionalidad (por ejemplo, `feature/preferencias`) y un pull request hacia `main`.
 
+### 2.8 Acceso por perfil (RF-03, RNF-12)
+
+Cada perfil tiene su grupo de rutas en `routes/web.php`, protegido con `VerificarPerfil::permitir(...)`:
+
+| Perfil | Prefijo | Nombres de ruta | Panel |
+|---|---|---|---|
+| Usuario final | `/turista` | `turista.*` | `turista.panel` |
+| Travel Group Perú | `/travel-group` | `travel-group.*` | `travel-group.panel` |
+| Administrador MTC | `/administracion` | `administracion.*` | `administracion.panel` |
+
+- Un módulo nuevo se registra dentro del grupo de su perfil. Si lo usan varios perfiles, la ruta lleva `VerificarPerfil::permitir(TipoPerfil::TravelGroup, TipoPerfil::AdministradorMtc)`.
+- Quien entra a la zona de otro perfil recibe un 403 ("Acceso denegado").
+- Al iniciar sesión, cada usuario va al panel de su perfil (`TipoPerfil::rutaPanel()`).
+- El panel muestra los módulos del perfil con `<x-tarjeta-modulo>`. Mientras un módulo no existe, la tarjeta dice "Próximamente"; cuando se construye, se le pasa `href` y la tarjeta se convierte en enlace.
+
 ## 3. Plan por etapas
 
 Primero los RF de prioridad Alta (producto mínimo), luego los de prioridad Media y Baja.
@@ -137,7 +152,7 @@ Primero los RF de prioridad Alta (producto mínimo), luego los de prioridad Medi
 
 - [x] RF-01: registro de turistas con correo y contraseña (`AutenticacionService::registrar`).
 - [x] RF-02: inicio y cierre de sesión, con bloqueo de un minuto tras cinco intentos fallidos.
-- [ ] RF-03: acceso por perfil (middleware según `TipoPerfil`) y un panel de inicio para cada perfil.
+- [x] RF-03: acceso por perfil con `VerificarPerfil` y un panel para cada perfil con sus módulos (ver 2.8).
 - [ ] RF-04: recuperación de contraseña por correo. El modelo ya envía el enlace a `usu_correo`; falta la pantalla y configurar el correo (`MAIL_*`).
 
 ### Etapa 2 — Integración de datos (RF-11 a RF-15)

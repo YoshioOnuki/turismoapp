@@ -9,7 +9,7 @@ test('muestra la página de registro a los invitados', function () {
     $this->get(route('registro'))->assertSeeLivewire('pages::auth.registro');
 });
 
-test('registra al turista, le abre la sesión y lo lleva a la página de inicio', function () {
+test('registra al turista, le abre la sesión y lo lleva a su panel', function () {
     Livewire::test('pages::auth.registro')
         ->set([
             'nombre' => 'Ana Quispe',
@@ -18,7 +18,7 @@ test('registra al turista, le abre la sesión y lo lleva a la página de inicio'
             'clave_confirmation' => 'clave-segura-123',
         ])
         ->call('registrar')
-        ->assertRedirectToRoute('inicio');
+        ->assertRedirectToRoute('turista.panel');
 
     $this->assertAuthenticatedAs(Usuario::where('usu_correo', 'ana@turismoapp.test')->sole());
 });

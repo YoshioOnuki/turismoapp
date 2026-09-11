@@ -81,9 +81,14 @@ class Usuario extends Authenticatable
         return $this->hasMany(Informe::class, 'inf_usu_codigo', 'usu_codigo');
     }
 
+    public function tipoPerfil(): TipoPerfil
+    {
+        return TipoPerfil::from($this->usu_per_codigo);
+    }
+
     public function tienePerfil(TipoPerfil $perfil): bool
     {
-        return $this->usu_per_codigo === $perfil->value;
+        return $this->tipoPerfil() === $perfil;
     }
 
     /**

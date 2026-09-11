@@ -33,6 +33,7 @@ test('travel group registra y da de baja una zona turística', function () {
     $componente = Livewire::actingAs($usuario)
         ->test('pages::travel-group.zonas')
         ->call('crear')
+        ->assertSet('mostrarFormulario', true)
         ->set('nombre', 'Bosque de Nubes')
         ->set('descripcion', 'Sendero interpretativo cercano a la estación.')
         ->set('estacionCodigo', (string) $estacion->getKey())
@@ -43,6 +44,7 @@ test('travel group registra y da de baja una zona turística', function () {
         ->set('dificultad', 'media')
         ->call('guardar')
         ->assertHasNoErrors()
+        ->assertSet('mostrarFormulario', false)
         ->assertSee('Zona turística creada.');
 
     $codigo = (int) ZonaTuristica::query()->value('zon_codigo');

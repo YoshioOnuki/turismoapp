@@ -37,6 +37,13 @@ new #[Title('Gestión de usuarios')] class extends Component
         ];
     }
 
+    public function nuevo(): void
+    {
+        $this->reset(['nombre', 'correo', 'clave', 'claveConfirmation', 'perfil']);
+        $this->resetErrorBag();
+        $this->mostrarFormulario = true;
+    }
+
     public function crear(UsuarioAdministracionService $usuarios): void
     {
         $datos = $this->validate();

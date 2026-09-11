@@ -9,7 +9,8 @@ test('el administrador consulta y crea usuarios', function () {
 
     Livewire::actingAs($administrador)
         ->test('pages::administracion.usuarios')
-        ->set('mostrarFormulario', true)
+        ->call('nuevo')
+        ->assertSet('mostrarFormulario', true)
         ->set('nombre', 'Gestor Travel')
         ->set('correo', 'gestor@example.test')
         ->set('clave', 'Clave1234')
@@ -17,6 +18,7 @@ test('el administrador consulta y crea usuarios', function () {
         ->set('perfil', (string) TipoPerfil::TravelGroup->value)
         ->call('crear')
         ->assertHasNoErrors()
+        ->assertSet('mostrarFormulario', false)
         ->assertSee('Usuario creado correctamente.');
 
     $this->assertDatabaseHas('tb_usuario', [

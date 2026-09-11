@@ -1,4 +1,3 @@
-
 <div class="space-y-8">
     <div>
         <flux:link :href="route('travel-group.panel')" wire:navigate icon="arrow-left">Volver al panel</flux:link>
@@ -6,32 +5,28 @@
         <flux:text class="mt-2">Datos sincronizados desde PeruRail disponibles en modo de solo lectura.</flux:text>
     </div>
 
-    <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        @forelse ($estaciones as $estacion)
-            <flux:card class="space-y-4" wire:key="estacion-{{ $estacion['codigo'] }}">
-                <div class="flex items-start justify-between gap-3">
-                    <div>
-                        <flux:heading size="lg">{{ $estacion['nombre'] }}</flux:heading>
-                        <flux:text size="sm">{{ $estacion['codigo_externo'] }}</flux:text>
-                    </div>
-                    <flux:badge :color="$estacion['estado'] ? 'green' : 'zinc'">
-                        {{ $estacion['estado'] ? 'Activa' : 'Inactiva' }}
-                    </flux:badge>
-                </div>
-
-                <dl class="space-y-3">
-                    <div>
-                        <dt class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Coordenadas</dt>
-                        <dd class="mt-1">{{ $estacion['latitud'] }}, {{ $estacion['longitud'] }}</dd>
-                    </div>
-                    <div>
-                        <dt class="text-sm font-medium text-zinc-500 dark:text-zinc-400">Zonas activas asociadas</dt>
-                        <dd class="mt-1">{{ $estacion['zonas_activas'] }}</dd>
-                    </div>
-                </dl>
-            </flux:card>
-        @empty
-            <flux:callout icon="information-circle" heading="Aún no hay estaciones sincronizadas." />
-        @endforelse
-    </div>
+    <flux:card>
+        <flux:table>
+            <flux:table.columns>
+                <flux:table.column>Estación</flux:table.column>
+                <flux:table.column>Código externo</flux:table.column>
+                <flux:table.column>Coordenadas</flux:table.column>
+                <flux:table.column>Zonas activas</flux:table.column>
+                <flux:table.column>Estado</flux:table.column>
+            </flux:table.columns>
+            <flux:table.rows>
+                @forelse ($estaciones as $estacion)
+                    <flux:table.row :key="$estacion['codigo']">
+                        <flux:table.cell variant="strong">{{ $estacion['nombre'] }}</flux:table.cell>
+                        <flux:table.cell>{{ $estacion['codigo_externo'] }}</flux:table.cell>
+                        <flux:table.cell>{{ $estacion['latitud'] }}, {{ $estacion['longitud'] }}</flux:table.cell>
+                        <flux:table.cell>{{ $estacion['zonas_activas'] }}</flux:table.cell>
+                        <flux:table.cell><flux:badge :color="$estacion['estado'] ? 'green' : 'zinc'">{{ $estacion['estado'] ? 'Activa' : 'Inactiva' }}</flux:badge></flux:table.cell>
+                    </flux:table.row>
+                @empty
+                    <flux:table.row><flux:table.cell colspan="5">Aún no hay estaciones sincronizadas.</flux:table.cell></flux:table.row>
+                @endforelse
+            </flux:table.rows>
+        </flux:table>
+    </flux:card>
 </div>

@@ -18,6 +18,12 @@ new #[Title('Planificar mi visita')] class extends Component
     /** @var list<array<string, mixed>> */
     public array $zonas = [];
 
+    /** @var list<array<string, mixed>> */
+    public array $trenes = [];
+
+    /** @var list<array<string, mixed>> */
+    public array $clima = [];
+
     public string $estacionCodigo = '';
     public bool $busquedaRealizada = false;
 
@@ -41,6 +47,9 @@ new #[Title('Planificar mi visita')] class extends Component
         ]);
 
         $this->zonas = $planificacion->zonasDisponibles($this->usuario(), (int) $datos['estacionCodigo']);
+        $informacion = $planificacion->informacionEstacion((int) $datos['estacionCodigo']);
+        $this->trenes = $informacion['trenes'];
+        $this->clima = $informacion['clima'];
         $this->busquedaRealizada = true;
     }
 

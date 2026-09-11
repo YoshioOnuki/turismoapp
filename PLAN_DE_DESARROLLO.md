@@ -177,7 +177,7 @@ Primero los RF de prioridad Alta (producto mínimo), luego los de prioridad Medi
 - [x] Selección de una estación activa (RF-06).
 - [x] Zonas filtradas por preferencias y por la distancia máxima caminable (RF-07), con aviso cuando no hay coincidencias (RF-09).
 - [ ] Ruta de ida y vuelta: distancia total, tiempo según `velocidad_caminata` y dificultad (RF-08), con mapa en Leaflet.
-- [ ] Trenes que llegan a la estación, con horario y precio (`Estacion::horariosDeLlegada`).
+- [x] Trenes que llegan a la estación, con horario y precio (`Estacion::horariosDeLlegada`).
 - [ ] Historial de búsquedas (RF-10).
 
 ### Etapa 5 — Informes (RF-21 a RF-24)

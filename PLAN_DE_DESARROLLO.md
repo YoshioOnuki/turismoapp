@@ -157,8 +157,8 @@ Primero los RF de prioridad Alta (producto mínimo), luego los de prioridad Medi
 
 ### Etapa 2 — Integración de datos (RF-11 a RF-15)
 
-- [ ] Un contrato por fuente (PeruRail y SENAMHI) con una implementación simulada, para conectar la real después sin tocar los módulos (RNF-16).
-- [ ] `SincronizacionService`: actualiza estaciones, horarios y clima con `updateOrCreate` por `*_codigo_externo`, dentro de una transacción, y registra cada ejecución en `tb_bitacora` (RF-14).
+- [x] Un contrato por fuente (PeruRail y SENAMHI) con una implementación simulada, para conectar la real después sin tocar los módulos (RNF-16).
+- [x] `SincronizacionService`: actualiza estaciones, horarios y clima con `updateOrCreate` por sus claves externas, dentro de transacciones independientes por fuente, y registra cada ejecución en `tb_bitacora` (RF-14).
 - [ ] Tarea programada diaria (RF-13), con la frecuencia tomada de `tb_parametro`.
 - [ ] Sincronización manual para el administrador (RF-15).
 - [ ] Si una fuente no responde, se conserva el último dato y se muestra su fecha (RNF-09).

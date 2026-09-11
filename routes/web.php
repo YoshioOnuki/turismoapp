@@ -32,6 +32,7 @@ Route::middleware('auth')->group(function () {
         ->group(function () {
             Route::livewire('/', 'pages::travel-group.panel')->name('panel');
             Route::livewire('/zonas', 'pages::travel-group.zonas')->name('zonas');
+            Route::livewire('/estaciones', 'pages::travel-group.estaciones')->name('estaciones');
         });
 
     Route::middleware(VerificarPerfil::permitir(TipoPerfil::AdministradorMtc))

@@ -16,6 +16,7 @@
             icono="building-office-2"
             titulo="Estaciones"
             descripcion="Consulta las estaciones ferroviarias disponibles."
+            :href="route('travel-group.estaciones')"
         />
 
         <x-tarjeta-modulo

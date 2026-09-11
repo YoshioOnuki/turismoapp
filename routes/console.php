@@ -1,5 +1,6 @@
 <?php
 
+use App\Console\Commands\RespaldarBaseDatosCommand;
 use App\Console\Commands\SincronizarFuentesCommand;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -12,3 +13,7 @@ Artisan::command('inspire', function () {
 Schedule::command(SincronizarFuentesCommand::class)
     ->hourly()
     ->withoutOverlapping(60);
+
+Schedule::command(RespaldarBaseDatosCommand::class)
+    ->dailyAt('02:00')
+    ->withoutOverlapping(120);

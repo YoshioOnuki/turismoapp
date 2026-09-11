@@ -183,7 +183,7 @@ Primero los RF de prioridad Alta (producto mínimo), luego los de prioridad Medi
 ### Etapa 5 — Informes (RF-21 a RF-24)
 
 - [x] Informe consolidado en pantalla, guardado en `tb_informe` (RF-21).
-- [ ] Exportación a PDF y HTML (RF-22). Requiere aprobar una librería de PDF antes de instalarla.
+- [ ] Exportación a PDF y HTML (RF-22). HTML implementado; PDF requiere aprobar una librería antes de instalarla.
 - [x] Reporte de estaciones y zonas asignadas para Travel Group Perú (RF-23).
 - [x] Reporte de uso para el MTC: estaciones y categorías más consultadas (RF-24).
 

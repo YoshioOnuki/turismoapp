@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe turístico {{ $informe->getKey() }}</title>
+    <style>
+        body { color: #172033; font-family: Arial, sans-serif; line-height: 1.45; margin: 32px; }
+        h1, h2 { color: #123a63; }
+        h1 { margin-bottom: 8px; }
+        h2 { font-size: 18px; margin-top: 32px; }
+        .metadata { background: #f3f6fa; border-radius: 8px; padding: 16px; }
+        .metadata p { margin: 4px 0; }
+        table { border-collapse: collapse; margin-top: 12px; width: 100%; }
+        th, td { border: 1px solid #d7dee8; padding: 9px; text-align: left; }
+        th { background: #e8eff7; color: #123a63; }
+        .empty { color: #667085; font-style: italic; }
+    </style>
+</head>
+<body>
+    <h1>Informe de planificación turística</h1>
+
+    <div class="metadata">
+        <p><strong>Informe:</strong> #{{ $informe->getKey() }}</p>
+        <p><strong>Estación:</strong> {{ $estacion }}</p>
+        <p><strong>Fecha:</strong> {{ $fecha }}</p>
+        <p><strong>Preferencias:</strong> {{ $categorias ?: 'Sin preferencias registradas' }}</p>
+    </div>
+
+    <h2>Zonas turísticas</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Zona</th>
+                <th>Categoría</th>
+                <th>Recorrido total</th>
+                <th>Tiempo estimado</th>
+                <th>Dificultad</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse ($zonas as $zona)
+                <tr>
+                    <td>{{ $zona['nombre'] ?? 'Sin nombre' }}</td>
+                    <td>{{ $zona['categoria'] ?? 'Sin categoría' }}</td>
+                    <td>{{ number_format((float) ($zona['distancia_total'] ?? 0) / 1000, 1) }} km</td>
+                    <td>{{ $zona['tiempo_minutos'] ?? 0 }} min</td>
+                    <td>{{ $zona['dificultad'] ?? 'No indicada' }}</td>
+                </tr>
+            @empty
+                <tr><td colspan="5" class="empty">No se encontraron zonas para esta planificación.</td></tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    <h2>Trenes de llegada</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Origen</th>
+                <th>Servicio</th>
+                <th>Salida</th>
+                <th>Llegada</th>
+                <th>Precio</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse ($trenes as $tren)
+                <tr>
+                    <td>{{ $tren['origen'] ?? 'No indicado' }}</td>
+                    <td>{{ $tren['servicio'] ?? 'No indicado' }}</td>
+                    <td>{{ $tren['salida'] ?? '—' }}</td>
+                    <td>{{ $tren['llegada'] ?? '—' }}</td>
+                    <td>S/ {{ number_format((float) ($tren['precio'] ?? 0), 2) }}</td>
+                </tr>
+            @empty
+                <tr><td colspan="5" class="empty">No hay trenes de llegada registrados.</td></tr>
+            @endforelse
+        </tbody>
+    </table>
+
+    <h2>Pronóstico del clima</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Fecha</th>
+                <th>Condición</th>
+                <th>Mínima</th>
+                <th>Máxima</th>
+                <th>Lluvia</th>
+            </tr>
+        </thead>
+        <tbody>
+            @forelse ($clima as $dia)
+                <tr>
+                    <td>{{ $dia['fecha'] ?? 'No indicada' }}</td>
+                    <td>{{ $dia['descripcion'] ?? 'No indicada' }}</td>
+                    <td>{{ $dia['minima'] ?? '—' }} °C</td>
+                    <td>{{ $dia['maxima'] ?? '—' }} °C</td>
+                    <td>{{ $dia['lluvia'] ?? 0 }}%</td>
+                </tr>
+            @empty
+                <tr><td colspan="5" class="empty">No hay pronóstico disponible.</td></tr>
+            @endforelse
+        </tbody>
+    </table>
+</body>
+</html>

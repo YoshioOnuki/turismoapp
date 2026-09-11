@@ -11,4 +11,9 @@ class InformePolicy
     {
         return $usuario->tienePerfil(TipoPerfil::UsuarioFinal);
     }
+
+    public function consultarUso(Usuario $usuario): bool
+    {
+        return $usuario->tienePerfil(TipoPerfil::AdministradorMtc);
+    }
 }

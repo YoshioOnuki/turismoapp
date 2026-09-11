@@ -36,6 +36,7 @@ Route::middleware('auth')->group(function () {
             Route::livewire('/', 'pages::travel-group.panel')->name('panel');
             Route::livewire('/zonas', 'pages::travel-group.zonas')->name('zonas');
             Route::livewire('/estaciones', 'pages::travel-group.estaciones')->name('estaciones');
+            Route::livewire('/reporte-zonas', 'pages::travel-group.reporte-zonas')->name('reporte-zonas');
         });
 
     Route::middleware(VerificarPerfil::permitir(TipoPerfil::AdministradorMtc))
@@ -46,5 +47,6 @@ Route::middleware('auth')->group(function () {
             Route::livewire('/sincronizacion', 'pages::administracion.sincronizacion')->name('sincronizacion');
             Route::livewire('/usuarios', 'pages::administracion.usuarios')->name('usuarios');
             Route::livewire('/configuracion', 'pages::administracion.configuracion')->name('configuracion');
+            Route::livewire('/reporte-uso', 'pages::administracion.reporte-uso')->name('reporte-uso');
         });
 });

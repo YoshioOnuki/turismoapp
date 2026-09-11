@@ -17,6 +17,7 @@ test('las policies aplican la matriz completa de acceso por perfil', function (T
         'zonas' => Gate::forUser($usuario)->allows('administrar', ZonaTuristica::class),
         'consulta_zonas' => Gate::forUser($usuario)->allows('consultar', ZonaTuristica::class),
         'estaciones' => Gate::forUser($usuario)->allows('consultarAdministracion', Estacion::class),
+        'reporte_zonas' => Gate::forUser($usuario)->allows('consultarReporte', Estacion::class),
         'seleccion_estacion' => Gate::forUser($usuario)->allows('seleccionar', Estacion::class),
         'usuarios' => Gate::forUser($usuario)->allows('administrar', Usuario::class),
         'categorias' => Gate::forUser($usuario)->allows('administrar', Categoria::class),
@@ -24,6 +25,7 @@ test('las policies aplican la matriz completa de acceso por perfil', function (T
         'parametros' => Gate::forUser($usuario)->allows('administrar', Parametro::class),
         'sincronizacion' => Gate::forUser($usuario)->allows('administrar', Bitacora::class),
         'informes_propios' => Gate::forUser($usuario)->allows('gestionarPropios', Informe::class),
+        'reporte_uso' => Gate::forUser($usuario)->allows('consultarUso', Informe::class),
     ];
 
     expect($permisos)->toBe($permisosEsperados);
@@ -32,6 +34,7 @@ test('las policies aplican la matriz completa de acceso por perfil', function (T
         'zonas' => false,
         'consulta_zonas' => true,
         'estaciones' => false,
+        'reporte_zonas' => false,
         'seleccion_estacion' => true,
         'usuarios' => false,
         'categorias' => false,
@@ -39,11 +42,13 @@ test('las policies aplican la matriz completa de acceso por perfil', function (T
         'parametros' => false,
         'sincronizacion' => false,
         'informes_propios' => true,
+        'reporte_uso' => false,
     ]],
     'travel group' => [TipoPerfil::TravelGroup, [
         'zonas' => true,
         'consulta_zonas' => false,
         'estaciones' => true,
+        'reporte_zonas' => true,
         'seleccion_estacion' => false,
         'usuarios' => false,
         'categorias' => false,
@@ -51,11 +56,13 @@ test('las policies aplican la matriz completa de acceso por perfil', function (T
         'parametros' => false,
         'sincronizacion' => false,
         'informes_propios' => false,
+        'reporte_uso' => false,
     ]],
     'administrador mtc' => [TipoPerfil::AdministradorMtc, [
         'zonas' => false,
         'consulta_zonas' => false,
         'estaciones' => false,
+        'reporte_zonas' => false,
         'seleccion_estacion' => false,
         'usuarios' => true,
         'categorias' => true,
@@ -63,5 +70,6 @@ test('las policies aplican la matriz completa de acceso por perfil', function (T
         'parametros' => true,
         'sincronizacion' => true,
         'informes_propios' => false,
+        'reporte_uso' => true,
     ]],
 ]);

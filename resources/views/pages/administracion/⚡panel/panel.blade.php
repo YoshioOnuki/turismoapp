@@ -30,6 +30,7 @@
             icono="chart-bar"
             titulo="Reporte de uso"
             descripcion="Consulta las estaciones y las categorías más buscadas."
+            :href="route('administracion.reporte-uso')"
         />
     </div>
 </div>

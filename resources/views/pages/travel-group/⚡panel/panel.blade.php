@@ -23,6 +23,7 @@
             icono="clipboard-document-list"
             titulo="Zonas por estación"
             descripcion="Obtén el listado de estaciones con sus zonas asignadas."
+            :href="route('travel-group.reporte-zonas')"
         />
     </div>
 </div>

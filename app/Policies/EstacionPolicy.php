@@ -16,4 +16,9 @@ class EstacionPolicy
     {
         return $usuario->tienePerfil(TipoPerfil::UsuarioFinal);
     }
+
+    public function consultarReporte(Usuario $usuario): bool
+    {
+        return $usuario->tienePerfil(TipoPerfil::TravelGroup);
+    }
 }

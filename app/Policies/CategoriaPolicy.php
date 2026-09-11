@@ -11,4 +11,9 @@ class CategoriaPolicy
     {
         return $usuario->tienePerfil(TipoPerfil::AdministradorMtc);
     }
+
+    public function seleccionar(Usuario $usuario): bool
+    {
+        return $usuario->tienePerfil(TipoPerfil::UsuarioFinal);
+    }
 }

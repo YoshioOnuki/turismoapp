@@ -9,6 +9,7 @@
             icono="heart"
             titulo="Mis preferencias"
             descripcion="Elige las categorías que te interesan: naturaleza, historia, aventura o gastronomía."
+            :href="route('turista.preferencias')"
         />
 
         <x-tarjeta-modulo

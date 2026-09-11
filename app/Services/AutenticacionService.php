@@ -5,10 +5,13 @@ namespace App\Services;
 use App\Enums\TipoPerfil;
 use App\Exceptions\Autenticacion\CredencialesInvalidasException;
 use App\Exceptions\Autenticacion\DemasiadosIntentosException;
+use App\Exceptions\Autenticacion\EnlaceRestablecimientoInvalidoException;
 use App\Models\Usuario;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 
@@ -91,5 +94,46 @@ class AutenticacionService
 
         session()->invalidate();
         session()->regenerateToken();
+    }
+
+    /**
+     * Envía el enlace de recuperación solo a cuentas activas. El resultado no se
+     * expone al usuario para evitar confirmar si un correo está registrado.
+     */
+    public function solicitarRestablecimiento(string $correo): void
+    {
+        Password::broker()->sendResetLink([
+            'usu_correo' => $correo,
+            'usu_estado' => true,
+        ]);
+    }
+
+    /**
+     * @throws EnlaceRestablecimientoInvalidoException
+     */
+    public function restablecerClave(string $correo, string $clave, string $token): void
+    {
+        $estado = Password::broker()->reset(
+            [
+                'usu_correo' => $correo,
+                'usu_estado' => true,
+                'password' => $clave,
+                'password_confirmation' => $clave,
+                'token' => $token,
+            ],
+            function (Usuario $usuario, string $clave): void {
+                DB::transaction(function () use ($usuario, $clave): void {
+                    $usuario->forceFill(['usu_clave' => $clave]);
+                    $usuario->setRememberToken(Str::random(60));
+                    $usuario->save();
+                });
+
+                event(new PasswordReset($usuario));
+            },
+        );
+
+        if ($estado !== Password::PASSWORD_RESET) {
+            throw new EnlaceRestablecimientoInvalidoException;
+        }
     }
 }

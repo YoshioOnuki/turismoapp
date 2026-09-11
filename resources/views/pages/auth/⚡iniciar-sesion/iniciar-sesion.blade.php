@@ -5,6 +5,10 @@
             <flux:text class="mt-2">Ingresa con tu correo y tu contraseña.</flux:text>
         </div>
 
+        @if (session('estado'))
+            <flux:callout variant="success" icon="check-circle" :heading="session('estado')" />
+        @endif
+
         @error('general')
             <flux:callout variant="danger" icon="exclamation-triangle" :heading="$message" />
         @enderror
@@ -27,6 +31,10 @@
                 required
                 viewable
             />
+
+            <div class="text-end">
+                <flux:link :href="route('password.request')" wire:navigate>¿Olvidaste tu contraseña?</flux:link>
+            </div>
 
             <flux:checkbox wire:model="recordar" label="Recordarme" />
 

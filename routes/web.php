@@ -12,6 +12,8 @@ Route::livewire('/inicio', 'pages::inicio')->name('inicio');
 Route::middleware('guest')->group(function () {
     Route::livewire('/iniciar-sesion', 'pages::auth.iniciar-sesion')->name('login');
     Route::livewire('/registro', 'pages::auth.registro')->name('registro');
+    Route::livewire('/olvidaste-tu-clave', 'pages::auth.solicitar-restablecimiento')->name('password.request');
+    Route::livewire('/restablecer-clave/{token}', 'pages::auth.restablecer-clave')->name('password.reset');
 });
 
 Route::middleware('auth')->group(function () {

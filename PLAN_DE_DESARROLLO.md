@@ -153,7 +153,7 @@ Primero los RF de prioridad Alta (producto mínimo), luego los de prioridad Medi
 - [x] RF-01: registro de turistas con correo y contraseña (`AutenticacionService::registrar`).
 - [x] RF-02: inicio y cierre de sesión, con bloqueo de un minuto tras cinco intentos fallidos.
 - [x] RF-03: acceso por perfil con `VerificarPerfil` y un panel para cada perfil con sus módulos (ver 2.8).
-- [ ] RF-04: recuperación de contraseña por correo. El modelo ya envía el enlace a `usu_correo`; falta la pantalla y configurar el correo (`MAIL_*`).
+- [x] RF-04: recuperación de contraseña por correo, con solicitud segura, enlace temporal y formulario para definir una clave nueva. Cada entorno debe proporcionar sus credenciales `MAIL_*`; en desarrollo se usa el mailer `log`.
 
 ### Etapa 2 — Integración de datos (RF-11 a RF-15)
 

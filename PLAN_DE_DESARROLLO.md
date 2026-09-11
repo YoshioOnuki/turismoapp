@@ -189,7 +189,7 @@ Primero los RF de prioridad Alta (producto mínimo), luego los de prioridad Medi
 
 ### Etapa 6 — Calidad y entrega
 
-- [ ] Revisar los RNF: consultas principales indexadas para tiempos de respuesta (RNF-05, RNF-07) y respaldo diario con siete copias implementado (RNF-10); HTTPS (RNF-13) pendiente de infraestructura.
+- [ ] Revisar los RNF: consultas indexadas (RNF-05, RNF-07), respaldo diario con siete copias (RNF-10) y generación HTTPS preparada (RNF-13); certificado y redirección pendientes del servidor.
 - [ ] Plan de pruebas en el formato del curso, con los casos PR-xx del ERS.
 - [ ] Cálculo de costos en el formato del curso.
 - [ ] Manual de usuario y manual de instalación.

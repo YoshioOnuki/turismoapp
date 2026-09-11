@@ -12,6 +12,8 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->trustHosts();
+
         $middleware->redirectUsersTo(fn (Request $request): string => route($request->user()->tipoPerfil()->rutaPanel()));
     })
     ->withExceptions(function (Exceptions $exceptions): void {

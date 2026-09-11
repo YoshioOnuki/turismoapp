@@ -16,6 +16,7 @@
             icono="map"
             titulo="Planificar mi visita"
             descripcion="Selecciona una estación y descubre las zonas a las que puedes llegar a pie, con el clima y los trenes."
+            :href="route('turista.planificar')"
         />
 
         <x-tarjeta-modulo

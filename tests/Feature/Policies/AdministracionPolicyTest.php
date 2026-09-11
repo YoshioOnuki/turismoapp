@@ -14,7 +14,9 @@ test('las policies aplican la matriz completa de acceso por perfil', function (T
 
     $permisos = [
         'zonas' => Gate::forUser($usuario)->allows('administrar', ZonaTuristica::class),
+        'consulta_zonas' => Gate::forUser($usuario)->allows('consultar', ZonaTuristica::class),
         'estaciones' => Gate::forUser($usuario)->allows('consultarAdministracion', Estacion::class),
+        'seleccion_estacion' => Gate::forUser($usuario)->allows('seleccionar', Estacion::class),
         'usuarios' => Gate::forUser($usuario)->allows('administrar', Usuario::class),
         'categorias' => Gate::forUser($usuario)->allows('administrar', Categoria::class),
         'preferencias' => Gate::forUser($usuario)->allows('seleccionar', Categoria::class),
@@ -26,7 +28,9 @@ test('las policies aplican la matriz completa de acceso por perfil', function (T
 })->with([
     'usuario final' => [TipoPerfil::UsuarioFinal, [
         'zonas' => false,
+        'consulta_zonas' => true,
         'estaciones' => false,
+        'seleccion_estacion' => true,
         'usuarios' => false,
         'categorias' => false,
         'preferencias' => true,
@@ -35,7 +39,9 @@ test('las policies aplican la matriz completa de acceso por perfil', function (T
     ]],
     'travel group' => [TipoPerfil::TravelGroup, [
         'zonas' => true,
+        'consulta_zonas' => false,
         'estaciones' => true,
+        'seleccion_estacion' => false,
         'usuarios' => false,
         'categorias' => false,
         'preferencias' => false,
@@ -44,7 +50,9 @@ test('las policies aplican la matriz completa de acceso por perfil', function (T
     ]],
     'administrador mtc' => [TipoPerfil::AdministradorMtc, [
         'zonas' => false,
+        'consulta_zonas' => false,
         'estaciones' => false,
+        'seleccion_estacion' => false,
         'usuarios' => true,
         'categorias' => true,
         'preferencias' => false,

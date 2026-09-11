@@ -11,4 +11,9 @@ class ZonaTuristicaPolicy
     {
         return $usuario->tienePerfil(TipoPerfil::TravelGroup);
     }
+
+    public function consultar(Usuario $usuario): bool
+    {
+        return $usuario->tienePerfil(TipoPerfil::UsuarioFinal);
+    }
 }

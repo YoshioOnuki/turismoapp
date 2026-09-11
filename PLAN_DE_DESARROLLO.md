@@ -174,8 +174,8 @@ Primero los RF de prioridad Alta (producto mínimo), luego los de prioridad Medi
 ### Etapa 4 — Consulta del turista (RF-05 a RF-10)
 
 - [x] Preferencias turísticas del usuario (RF-05).
-- [ ] Selección de una estación activa (RF-06).
-- [ ] Zonas filtradas por preferencias y por la distancia máxima caminable (RF-07), con aviso cuando no hay coincidencias (RF-09).
+- [x] Selección de una estación activa (RF-06).
+- [x] Zonas filtradas por preferencias y por la distancia máxima caminable (RF-07), con aviso cuando no hay coincidencias (RF-09).
 - [ ] Ruta de ida y vuelta: distancia total, tiempo según `velocidad_caminata` y dificultad (RF-08), con mapa en Leaflet.
 - [ ] Trenes que llegan a la estación, con horario y precio (`Estacion::horariosDeLlegada`).
 - [ ] Historial de búsquedas (RF-10).

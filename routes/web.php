@@ -25,6 +25,7 @@ Route::middleware('auth')->group(function () {
         ->group(function () {
             Route::livewire('/', 'pages::turista.panel')->name('panel');
             Route::livewire('/preferencias', 'pages::turista.preferencias')->name('preferencias');
+            Route::livewire('/planificar', 'pages::turista.planificar')->name('planificar');
         });
 
     Route::middleware(VerificarPerfil::permitir(TipoPerfil::TravelGroup))

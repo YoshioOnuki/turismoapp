@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "../../vendor/livewire/flux/dist/flux.css";
+@import 'tailwindcss';
+@import '../../vendor/livewire/flux/dist/flux.css';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -8,9 +8,8 @@
 
 @theme {
     --font-sans:
-        Inter, "Instrument Sans", ui-sans-serif, system-ui, sans-serif,
-        "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol",
-        "Noto Color Emoji";
+        Inter, 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
 @theme {
@@ -37,4 +36,21 @@
         --color-accent-content: var(--color-blue-400);
         --color-accent-foreground: var(--color-white);
     }
+}
+
+.leaflet-marker-icon.marcador-mapa {
+    display: grid;
+    place-items: center;
+    border: 2px solid white;
+    border-radius: 9999px;
+    box-shadow: 0 1px 5px #0006;
+    color: white;
+    font: 700 14px/1 sans-serif;
+}
+
+.marcador-mapa-estacion {
+    background: #0f766e;
+}
+.marcador-mapa-zona {
+    background: #2563eb;
 }

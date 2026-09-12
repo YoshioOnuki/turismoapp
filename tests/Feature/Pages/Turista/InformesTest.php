@@ -8,7 +8,7 @@ use App\Models\Usuario;
 test('el turista consulta su historial de informes en una tabla', function () {
     $turista = Usuario::factory()->conPerfil(TipoPerfil::UsuarioFinal)->create();
     $estacion = Estacion::factory()->create(['est_nombre' => 'Estación Central']);
-    Informe::factory()->create([
+    $informe = Informe::factory()->create([
         'inf_usu_codigo' => $turista->getKey(),
         'inf_est_codigo' => $estacion->getKey(),
     ]);
@@ -16,7 +16,9 @@ test('el turista consulta su historial de informes en una tabla', function () {
     $this->actingAs($turista)
         ->get(route('turista.informes'))
         ->assertOk()
-        ->assertSeeInOrder(['Mis informes', 'Estación Central']);
+        ->assertSeeInOrder(['Mis informes', 'Estación Central'])
+        ->assertSee(route('turista.informes.pdf', $informe))
+        ->assertSee(route('turista.informes.html', $informe));
 });
 
 test('un administrador no puede consultar informes de turistas', function () {

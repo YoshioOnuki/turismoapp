@@ -176,14 +176,14 @@ Primero los RF de prioridad Alta (producto mínimo), luego los de prioridad Medi
 - [x] Preferencias turísticas del usuario (RF-05).
 - [x] Selección de una estación activa (RF-06).
 - [x] Zonas filtradas por preferencias y por la distancia máxima caminable (RF-07), con aviso cuando no hay coincidencias (RF-09).
-- [ ] Ruta de ida y vuelta: distancia total, tiempo según `velocidad_caminata` y dificultad (RF-08), con mapa en Leaflet.
+- [x] Ruta de ida y vuelta: distancia total, tiempo según `velocidad_caminata` y dificultad (RF-08), con mapa en Leaflet, marcadores y selección de zonas. Las conexiones del mapa son orientativas; las distancias corresponden al recorrido registrado por Travel Group.
 - [x] Trenes que llegan a la estación, con horario y precio (`Estacion::horariosDeLlegada`).
 - [x] Historial de búsquedas (RF-10).
 
 ### Etapa 5 — Informes (RF-21 a RF-24)
 
 - [x] Informe consolidado en pantalla, guardado en `tb_informe` (RF-21).
-- [ ] Exportación a PDF y HTML (RF-22). HTML implementado; PDF requiere aprobar una librería antes de instalarla.
+- [x] Exportación a PDF y HTML (RF-22), con autorización por propietario. PDF generado con Dompdf, formato A4, caracteres en español y tablas con paginación.
 - [x] Reporte de estaciones y zonas asignadas para Travel Group Perú (RF-23).
 - [x] Reporte de uso para el MTC: estaciones y categorías más consultadas (RF-24).
 

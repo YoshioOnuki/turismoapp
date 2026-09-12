@@ -15,9 +15,24 @@
         th, td { border: 1px solid #d7dee8; padding: 9px; text-align: left; }
         th { background: #e8eff7; color: #123a63; }
         .empty { color: #667085; font-style: italic; }
+        @if ($pdf ?? false)
+            @page { margin: 32px 36px 44px; }
+            body { font-family: "DejaVu Sans", sans-serif; font-size: 10px; margin: 0; }
+            h1 { font-size: 22px; }
+            h2 { font-size: 15px; margin-top: 22px; page-break-after: avoid; }
+            .metadata, tr { page-break-inside: avoid; }
+            thead { display: table-header-group; }
+            th, td { padding: 7px; overflow-wrap: break-word; }
+            table { table-layout: fixed; }
+            footer { position: fixed; bottom: -25px; font-size: 9px; color: #667085; }
+            .pagina:after { content: counter(page); }
+        @endif
     </style>
 </head>
 <body>
+    @if ($pdf ?? false)
+        <footer>TurismoApp · Informe #{{ $informe->getKey() }} · Página <span class="pagina"></span></footer>
+    @endif
     <h1>Informe de planificación turística</h1>
 
     <div class="metadata">

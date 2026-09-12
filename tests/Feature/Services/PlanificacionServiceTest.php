@@ -22,6 +22,8 @@ test('filtra zonas activas por estación preferencias y distancia máxima', func
         'zon_est_codigo' => $estacion->getKey(),
         'zon_cat_codigo' => $preferida->getKey(),
         'zon_nombre' => 'Zona disponible',
+        'zon_latitud' => -13.1605,
+        'zon_longitud' => -72.5421,
         'zon_distancia' => 900,
     ]);
     ZonaTuristica::factory()->create([
@@ -41,12 +43,18 @@ test('filtra zonas activas por estación preferencias y distancia máxima', func
 
     expect($zonas)->toHaveCount(1)
         ->and($zonas[0]['nombre'])->toBe('Zona disponible')
+        ->and($zonas[0]['latitud'])->toBe(-13.1605)
+        ->and($zonas[0]['longitud'])->toBe(-72.5421)
         ->and($zonas[0]['distancia_total'])->toBe(1800)
         ->and($zonas[0]['tiempo_minutos'])->toBe(27);
 });
 
 test('lista los trenes de llegada y el pronóstico de la estación', function () {
-    $estacion = Estacion::factory()->create();
+    $estacion = Estacion::factory()->create([
+        'est_nombre' => 'Estación del Valle',
+        'est_latitud' => -13.2587,
+        'est_longitud' => -72.2636,
+    ]);
     $origen = Estacion::factory()->create(['est_nombre' => 'Estación Origen']);
     Horario::factory()->create([
         'hor_est_codigo_origen' => $origen->getKey(),
@@ -64,6 +72,12 @@ test('lista los trenes de llegada y el pronóstico de la estación', function ()
 
     $informacion = app(PlanificacionService::class)->informacionEstacion($estacion->getKey());
 
+    expect($informacion['estacion'])->toBe([
+        'codigo' => $estacion->getKey(),
+        'nombre' => 'Estación del Valle',
+        'latitud' => -13.2587,
+        'longitud' => -72.2636,
+    ]);
     expect($informacion['trenes'])->toHaveCount(1)
         ->and($informacion['trenes'][0]['origen'])->toBe('Estación Origen')
         ->and($informacion['trenes'][0]['llegada'])->toBe('10:30');

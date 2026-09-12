@@ -26,6 +26,9 @@ new #[Title('Planificar mi visita')] class extends Component
     /** @var list<array<string, mixed>> */
     public array $clima = [];
 
+    /** @var array{codigo: int, nombre: string, latitud: float, longitud: float}|null */
+    public ?array $estacionConsultada = null;
+
     public string $estacionCodigo = '';
     public bool $busquedaRealizada = false;
     public ?string $mensajeInforme = null;
@@ -41,6 +44,8 @@ new #[Title('Planificar mi visita')] class extends Component
     {
         Gate::authorize('seleccionar', Estacion::class);
         Gate::authorize('consultar', ZonaTuristica::class);
+        $this->resetValidation();
+        $this->reset(['zonas', 'trenes', 'clima', 'estacionConsultada', 'busquedaRealizada', 'mensajeInforme']);
         $datos = $this->validate([
             'estacionCodigo' => [
                 'required',
@@ -49,8 +54,18 @@ new #[Title('Planificar mi visita')] class extends Component
             ],
         ]);
 
-        $this->zonas = $planificacion->zonasDisponibles($this->usuario(), (int) $datos['estacionCodigo']);
-        $informacion = $planificacion->informacionEstacion((int) $datos['estacionCodigo']);
+        try {
+            $zonas = $planificacion->zonasDisponibles($this->usuario(), (int) $datos['estacionCodigo']);
+            $informacion = $planificacion->informacionEstacion((int) $datos['estacionCodigo']);
+        } catch (Throwable $excepcion) {
+            report($excepcion);
+            $this->addError('general', 'No fue posible consultar la planificación. Inténtalo nuevamente.');
+
+            return;
+        }
+
+        $this->zonas = $zonas;
+        $this->estacionConsultada = $informacion['estacion'];
         $this->trenes = $informacion['trenes'];
         $this->clima = $informacion['clima'];
         $this->busquedaRealizada = true;

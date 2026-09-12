@@ -25,6 +25,9 @@
                         <flux:table.cell>{{ $informe['zonas'] }}</flux:table.cell>
                         <flux:table.cell>{{ $informe['trenes'] }}</flux:table.cell>
                         <flux:table.cell>
+                            <flux:button :href="route('turista.informes.pdf', $informe['codigo'])" size="sm" icon="arrow-down-tray">
+                                PDF
+                            </flux:button>
                             <flux:button :href="route('turista.informes.html', $informe['codigo'])" size="sm" icon="arrow-down-tray">
                                 HTML
                             </flux:button>

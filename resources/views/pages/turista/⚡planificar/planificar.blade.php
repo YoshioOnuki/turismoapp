@@ -20,6 +20,10 @@
         </form>
     </flux:card>
 
+    @error('general')
+        <flux:callout variant="danger" icon="exclamation-triangle" :heading="$message" />
+    @enderror
+
     @if ($busquedaRealizada && $zonas === [])
         <flux:callout variant="warning" icon="information-circle" heading="No encontramos zonas que coincidan con tus preferencias y la distancia máxima configurada.">
             <flux:callout.text>Puedes ajustar tus preferencias o elegir otra estación.</flux:callout.text>
@@ -28,6 +32,28 @@
             </x-slot>
         </flux:callout>
     @elseif ($busquedaRealizada)
+        <section
+            wire:key="mapa-{{ md5(json_encode([$estacionConsultada, $zonas])) }}"
+            x-data="mapaPlanificacion(@js($estacionConsultada), @js($zonas))"
+            class="space-y-4"
+            aria-label="Mapa de zonas turísticas"
+        >
+            <flux:heading size="lg">Mapa del recorrido</flux:heading>
+            <flux:text>La estación es el punto de salida y regreso. Las líneas son conexiones orientativas entre ubicaciones; no representan senderos ni indicaciones de navegación. La distancia y el tiempo corresponden al recorrido registrado por Travel Group.</flux:text>
+            <flux:card class="space-y-4">
+                <flux:select x-model="zonaSeleccionada" x-on:change="seleccionarZona()" label="Ver zona en el mapa">
+                    <flux:select.option value="">Todas las zonas</flux:select.option>
+                    @foreach ($zonas as $indice => $zona)
+                        <flux:select.option :value="$zona['codigo']" wire:key="opcion-mapa-{{ $zona['codigo'] }}">{{ $indice + 1 }}. {{ $zona['nombre'] }}</flux:select.option>
+                    @endforeach
+                </flux:select>
+                <p x-show="cargando" role="status" class="text-sm text-zinc-600 dark:text-zinc-300">Cargando mapa…</p>
+                <p x-cloak x-show="aviso" x-text="aviso" role="status" class="text-sm text-amber-700 dark:text-amber-300"></p>
+                <div wire:ignore x-ref="mapa" class="relative isolate h-80 rounded-lg sm:h-96" aria-label="Estación y zonas disponibles. Usa los controles para acercar o alejar el mapa."></div>
+                <flux:text size="sm">E: {{ $estacionConsultada['nombre'] }} · Los números identifican las zonas en el orden de la tabla.</flux:text>
+            </flux:card>
+        </section>
+
         <section class="space-y-4">
             <flux:heading size="lg">Zonas disponibles</flux:heading>
             <flux:card>
@@ -128,10 +154,6 @@
         @if ($mensajeInforme)
             <flux:callout variant="success" icon="check-circle" :heading="$mensajeInforme" />
         @endif
-
-        @error('general')
-            <flux:callout variant="danger" icon="exclamation-triangle" :heading="$message" />
-        @enderror
 
         <div class="flex justify-end">
             <flux:button wire:click="generarInforme" wire:loading.attr="disabled" wire:target="generarInforme" variant="primary" icon="document-plus">

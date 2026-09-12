@@ -3,6 +3,7 @@
 use App\Enums\TipoPerfil;
 use App\Http\Controllers\Auth\CerrarSesionController;
 use App\Http\Controllers\InformeHtmlController;
+use App\Http\Controllers\InformePdfController;
 use App\Http\Middleware\VerificarPerfil;
 use Illuminate\Support\Facades\Route;
 
@@ -29,6 +30,7 @@ Route::middleware('auth')->group(function () {
             Route::livewire('/planificar', 'pages::turista.planificar')->name('planificar');
             Route::livewire('/informes', 'pages::turista.informes')->name('informes');
             Route::get('/informes/{informe}/html', InformeHtmlController::class)->name('informes.html');
+            Route::get('/informes/{informe}/pdf', InformePdfController::class)->name('informes.pdf');
         });
 
     Route::middleware(VerificarPerfil::permitir(TipoPerfil::TravelGroup))

@@ -26,7 +26,7 @@ class PlanificacionService
             ->all();
     }
 
-    /** @return list<array{codigo: int, nombre: string, descripcion: string, categoria: string, distancia: int, distancia_total: int, tiempo_minutos: int, dificultad: string, imagen: ?string}> */
+    /** @return list<array{codigo: int, nombre: string, descripcion: string, categoria: string, latitud: float, longitud: float, distancia: int, distancia_total: int, tiempo_minutos: int, dificultad: string, imagen: ?string}> */
     public function zonasDisponibles(Usuario $usuario, int $estacionCodigo): array
     {
         $categorias = $usuario->preferencias()
@@ -54,6 +54,8 @@ class PlanificacionService
                 'nombre' => $zona->zon_nombre,
                 'descripcion' => $zona->zon_descripcion,
                 'categoria' => $zona->categoria->cat_nombre,
+                'latitud' => $zona->zon_latitud,
+                'longitud' => $zona->zon_longitud,
                 'distancia' => $zona->zon_distancia,
                 'distancia_total' => $zona->zon_distancia * 2,
                 'tiempo_minutos' => (int) ceil(($zona->zon_distancia * 2) / ($velocidad * 1000 / 60)),
@@ -66,13 +68,22 @@ class PlanificacionService
 
     /**
      * @return array{
+     *     estacion: array{codigo: int, nombre: string, latitud: float, longitud: float},
      *     trenes: list<array{codigo: int, origen: string, servicio: string, salida: string, llegada: string, precio: string}>,
      *     clima: list<array{codigo: int, fecha: string, descripcion: string, minima: string, maxima: string, lluvia: int}>
      * }
      */
     public function informacionEstacion(int $estacionCodigo): array
     {
+        $estacion = Estacion::query()->where('est_estado', true)->findOrFail($estacionCodigo);
+
         return [
+            'estacion' => [
+                'codigo' => $estacion->getKey(),
+                'nombre' => $estacion->est_nombre,
+                'latitud' => $estacion->est_latitud,
+                'longitud' => $estacion->est_longitud,
+            ],
             'trenes' => Horario::query()
                 ->with('estacionOrigen')
                 ->where('hor_est_codigo_destino', $estacionCodigo)

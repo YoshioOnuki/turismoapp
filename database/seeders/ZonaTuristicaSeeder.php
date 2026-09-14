@@ -33,7 +33,7 @@ class ZonaTuristicaSeeder extends Seeder
     }
 
     /**
-     * @return list<array{estacion: string, categoria: string, zon_nombre: string, zon_descripcion: string, zon_latitud: float, zon_longitud: float, zon_distancia: int, zon_dificultad: Dificultad}>
+     * @return list<array{estacion: string, categoria: string, zon_nombre: string, zon_descripcion: string, zon_latitud: float, zon_longitud: float, zon_distancia: int, zon_dif_codigo: Dificultad}>
      */
     private function zonas(): array
     {
@@ -46,7 +46,7 @@ class ZonaTuristicaSeeder extends Seeder
                 'zon_latitud' => -13.1544,
                 'zon_longitud' => -72.5247,
                 'zon_distancia' => 150,
-                'zon_dificultad' => Dificultad::Baja,
+                'zon_dif_codigo' => Dificultad::Baja,
             ],
             [
                 'estacion' => 'MAP',
@@ -56,7 +56,7 @@ class ZonaTuristicaSeeder extends Seeder
                 'zon_latitud' => -13.1575,
                 'zon_longitud' => -72.5195,
                 'zon_distancia' => 850,
-                'zon_dificultad' => Dificultad::Media,
+                'zon_dif_codigo' => Dificultad::Media,
             ],
             [
                 'estacion' => 'MAP',
@@ -66,7 +66,7 @@ class ZonaTuristicaSeeder extends Seeder
                 'zon_latitud' => -13.1601,
                 'zon_longitud' => -72.5327,
                 'zon_distancia' => 1300,
-                'zon_dificultad' => Dificultad::Baja,
+                'zon_dif_codigo' => Dificultad::Baja,
             ],
             [
                 'estacion' => 'MAP',
@@ -76,7 +76,7 @@ class ZonaTuristicaSeeder extends Seeder
                 'zon_latitud' => -13.1668,
                 'zon_longitud' => -72.5381,
                 'zon_distancia' => 1900,
-                'zon_dificultad' => Dificultad::Media,
+                'zon_dif_codigo' => Dificultad::Media,
             ],
             [
                 'estacion' => 'MAP',
@@ -86,7 +86,7 @@ class ZonaTuristicaSeeder extends Seeder
                 'zon_latitud' => -13.1531,
                 'zon_longitud' => -72.5222,
                 'zon_distancia' => 700,
-                'zon_dificultad' => Dificultad::Alta,
+                'zon_dif_codigo' => Dificultad::Alta,
             ],
             [
                 'estacion' => 'OLL',
@@ -96,7 +96,7 @@ class ZonaTuristicaSeeder extends Seeder
                 'zon_latitud' => -13.2573,
                 'zon_longitud' => -72.2665,
                 'zon_distancia' => 900,
-                'zon_dificultad' => Dificultad::Media,
+                'zon_dif_codigo' => Dificultad::Media,
             ],
             [
                 'estacion' => 'OLL',
@@ -106,7 +106,7 @@ class ZonaTuristicaSeeder extends Seeder
                 'zon_latitud' => -13.2566,
                 'zon_longitud' => -72.2621,
                 'zon_distancia' => 1000,
-                'zon_dificultad' => Dificultad::Alta,
+                'zon_dif_codigo' => Dificultad::Alta,
             ],
             [
                 'estacion' => 'OLL',
@@ -116,7 +116,7 @@ class ZonaTuristicaSeeder extends Seeder
                 'zon_latitud' => -13.2583,
                 'zon_longitud' => -72.2636,
                 'zon_distancia' => 600,
-                'zon_dificultad' => Dificultad::Baja,
+                'zon_dif_codigo' => Dificultad::Baja,
             ],
             [
                 'estacion' => 'WAN',
@@ -126,7 +126,7 @@ class ZonaTuristicaSeeder extends Seeder
                 'zon_latitud' => -13.5198,
                 'zon_longitud' => -71.9750,
                 'zon_distancia' => 1200,
-                'zon_dificultad' => Dificultad::Baja,
+                'zon_dif_codigo' => Dificultad::Baja,
             ],
             [
                 'estacion' => 'WAN',
@@ -136,7 +136,7 @@ class ZonaTuristicaSeeder extends Seeder
                 'zon_latitud' => -13.5163,
                 'zon_longitud' => -71.9785,
                 'zon_distancia' => 1800,
-                'zon_dificultad' => Dificultad::Baja,
+                'zon_dif_codigo' => Dificultad::Baja,
             ],
             [
                 'estacion' => 'WAN',
@@ -146,7 +146,7 @@ class ZonaTuristicaSeeder extends Seeder
                 'zon_latitud' => -13.5220,
                 'zon_longitud' => -71.9843,
                 'zon_distancia' => 2200,
-                'zon_dificultad' => Dificultad::Baja,
+                'zon_dif_codigo' => Dificultad::Baja,
             ],
             [
                 'estacion' => 'WAN',
@@ -156,7 +156,7 @@ class ZonaTuristicaSeeder extends Seeder
                 'zon_latitud' => -13.5093,
                 'zon_longitud' => -71.9819,
                 'zon_distancia' => 3400,
-                'zon_dificultad' => Dificultad::Alta,
+                'zon_dif_codigo' => Dificultad::Alta,
             ],
             [
                 'estacion' => 'PUN',
@@ -166,7 +166,7 @@ class ZonaTuristicaSeeder extends Seeder
                 'zon_latitud' => -15.8406,
                 'zon_longitud' => -70.0280,
                 'zon_distancia' => 600,
-                'zon_dificultad' => Dificultad::Baja,
+                'zon_dif_codigo' => Dificultad::Baja,
             ],
             [
                 'estacion' => 'PUN',
@@ -176,7 +176,7 @@ class ZonaTuristicaSeeder extends Seeder
                 'zon_latitud' => -15.8328,
                 'zon_longitud' => -70.0148,
                 'zon_distancia' => 1400,
-                'zon_dificultad' => Dificultad::Baja,
+                'zon_dif_codigo' => Dificultad::Baja,
             ],
             [
                 'estacion' => 'PUN',
@@ -186,7 +186,7 @@ class ZonaTuristicaSeeder extends Seeder
                 'zon_latitud' => -15.8378,
                 'zon_longitud' => -70.0360,
                 'zon_distancia' => 1700,
-                'zon_dificultad' => Dificultad::Alta,
+                'zon_dif_codigo' => Dificultad::Alta,
             ],
             [
                 'estacion' => 'PUN',
@@ -196,7 +196,7 @@ class ZonaTuristicaSeeder extends Seeder
                 'zon_latitud' => -15.8424,
                 'zon_longitud' => -70.0262,
                 'zon_distancia' => 500,
-                'zon_dificultad' => Dificultad::Baja,
+                'zon_dif_codigo' => Dificultad::Baja,
             ],
         ];
     }

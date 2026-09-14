@@ -24,12 +24,12 @@ class ZonaTuristicaFactory extends Factory
         return [
             'zon_est_codigo' => Estacion::factory(),
             'zon_cat_codigo' => Categoria::factory(),
-            'zon_nombre' => Str::title(fake()->words(3, true)),
+            'zon_nombre' => Str::title(fake()->unique()->words(3, true)),
             'zon_descripcion' => fake()->paragraph(),
             'zon_latitud' => fake()->latitude(-18, -3),
             'zon_longitud' => fake()->longitude(-81, -69),
             'zon_distancia' => fake()->numberBetween(200, 3000),
-            'zon_dificultad' => fake()->randomElement(Dificultad::cases()),
+            'zon_dif_codigo' => fake()->randomElement(Dificultad::cases()),
             'zon_estado' => true,
         ];
     }

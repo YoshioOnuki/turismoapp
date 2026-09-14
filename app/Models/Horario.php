@@ -18,7 +18,7 @@ use Illuminate\Support\Carbon;
     'hor_codigo_externo',
     'hor_est_codigo_origen',
     'hor_est_codigo_destino',
-    'hor_servicio',
+    'hor_ser_codigo',
     'hor_hora_salida',
     'hor_hora_llegada',
     'hor_precio',
@@ -63,6 +63,14 @@ class Horario extends Model
     }
 
     /**
+     * @return BelongsTo<Servicio, $this>
+     */
+    public function servicio(): BelongsTo
+    {
+        return $this->belongsTo(Servicio::class, 'hor_ser_codigo', 'ser_codigo');
+    }
+
+    /**
      * Tiempo de viaje del tren, calculado con la hora de salida y la de llegada.
      */
     public function duracionEnMinutos(): int
@@ -75,5 +83,21 @@ class Horario extends Model
         }
 
         return (int) $salida->diffInMinutes($llegada);
+    }
+
+    /**
+     * Tiempo de viaje en texto, por ejemplo "1 h 30 min" (RF-11).
+     */
+    public function duracionFormateada(): string
+    {
+        $minutos = $this->duracionEnMinutos();
+        $horas = intdiv($minutos, 60);
+        $resto = $minutos % 60;
+
+        return match (true) {
+            $horas === 0 => "{$resto} min",
+            $resto === 0 => "{$horas} h",
+            default => "{$horas} h {$resto} min",
+        };
     }
 }

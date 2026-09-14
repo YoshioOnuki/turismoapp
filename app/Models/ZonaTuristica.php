@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
     'zon_latitud',
     'zon_longitud',
     'zon_distancia',
-    'zon_dificultad',
+    'zon_dif_codigo',
     'zon_estado',
 ])]
 class ZonaTuristica extends Model
@@ -46,7 +46,7 @@ class ZonaTuristica extends Model
             'zon_latitud' => 'float',
             'zon_longitud' => 'float',
             'zon_distancia' => 'integer',
-            'zon_dificultad' => Dificultad::class,
+            'zon_dif_codigo' => Dificultad::class,
             'zon_estado' => 'boolean',
         ];
     }

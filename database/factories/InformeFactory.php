@@ -22,11 +22,6 @@ class InformeFactory extends Factory
         return [
             'inf_usu_codigo' => Usuario::factory(),
             'inf_est_codigo' => Estacion::factory(),
-            'inf_contenido' => [
-                'zonas' => [],
-                'clima' => null,
-                'trenes' => [],
-            ],
         ];
     }
 }

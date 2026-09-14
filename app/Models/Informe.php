@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * y alimenta el reporte de estaciones y categorías más consultadas (RF-24).
  */
 #[Table(name: 'tb_informe', key: 'inf_codigo')]
-#[Fillable(['inf_est_codigo', 'inf_contenido'])]
+#[Fillable(['inf_est_codigo'])]
 class Informe extends Model
 {
     /** @use HasFactory<InformeFactory> */
@@ -29,18 +29,6 @@ class Informe extends Model
      * @var string|null
      */
     public const UPDATED_AT = null;
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'inf_contenido' => 'array',
-        ];
-    }
 
     /**
      * @return BelongsTo<Usuario, $this>
@@ -66,5 +54,37 @@ class Informe extends Model
     public function categorias(): BelongsToMany
     {
         return $this->belongsToMany(Categoria::class, 'tb_informe_categoria', 'ica_inf_codigo', 'ica_cat_codigo');
+    }
+
+    /**
+     * Zonas recomendadas con el recorrido y el tiempo calculados al generar el informe.
+     *
+     * @return BelongsToMany<ZonaTuristica, $this>
+     */
+    public function zonas(): BelongsToMany
+    {
+        return $this->belongsToMany(ZonaTuristica::class, 'tb_informe_zona', 'izo_inf_codigo', 'izo_zon_codigo')
+            ->withPivot(['izo_distancia_total', 'izo_tiempo_minutos']);
+    }
+
+    /**
+     * Trenes de llegada con el precio del boleto vigente al generar el informe.
+     *
+     * @return BelongsToMany<Horario, $this>
+     */
+    public function horarios(): BelongsToMany
+    {
+        return $this->belongsToMany(Horario::class, 'tb_informe_horario', 'iho_inf_codigo', 'iho_hor_codigo')
+            ->withPivot('iho_precio');
+    }
+
+    /**
+     * Pronósticos del clima incluidos en el informe.
+     *
+     * @return BelongsToMany<Clima, $this>
+     */
+    public function climas(): BelongsToMany
+    {
+        return $this->belongsToMany(Clima::class, 'tb_informe_clima', 'icl_inf_codigo', 'icl_cli_codigo');
     }
 }

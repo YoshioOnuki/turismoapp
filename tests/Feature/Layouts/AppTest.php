@@ -9,7 +9,7 @@ test('ofrece iniciar sesión y crear cuenta a los invitados', function () {
         ->assertSee(route('registro'));
 });
 
-test('muestra el nombre, el perfil y el acceso al panel del usuario', function () {
+test('muestra el nombre, el perfil y la navegación correspondiente al administrador', function () {
     $usuario = Usuario::factory()->conPerfil(TipoPerfil::AdministradorMtc)->create(['usu_nombre' => 'Ana Quispe']);
 
     $this->actingAs($usuario)
@@ -17,7 +17,13 @@ test('muestra el nombre, el perfil y el acceso al panel del usuario', function (
         ->assertSee('Ana Quispe')
         ->assertSee('Administrador MTC')
         ->assertSee(route('administracion.panel'))
+        ->assertSee(route('administracion.usuarios'))
+        ->assertSee(route('administracion.horarios'))
+        ->assertSee(route('administracion.sincronizacion'))
+        ->assertSee(route('administracion.configuracion'))
+        ->assertSee(route('administracion.reporte-uso'))
         ->assertSee(route('logout'))
+        ->assertDontSee(route('turista.planificar'))
         ->assertDontSee(route('login'));
 });
 

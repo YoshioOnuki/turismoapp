@@ -38,6 +38,52 @@
     }
 }
 
+@media (prefers-reduced-motion: no-preference) {
+    .navegacion-contenido-entrada {
+        animation: turismo-contenido-entrada 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    ::view-transition-group(contenido) {
+        animation-duration: 280ms;
+        animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    ::view-transition-old(contenido) {
+        animation: turismo-contenido-salida 140ms ease-in both;
+    }
+
+    ::view-transition-new(contenido) {
+        animation: turismo-contenido-entrada 280ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    ::view-transition-group(contenido),
+    ::view-transition-old(contenido),
+    ::view-transition-new(contenido) {
+        animation: none;
+    }
+}
+
+@keyframes turismo-contenido-salida {
+    to {
+        opacity: 0;
+        transform: translateY(-4px) scale(0.995);
+    }
+}
+
+@keyframes turismo-contenido-entrada {
+    from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.995);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
 .leaflet-marker-icon.marcador-mapa {
     display: grid;
     place-items: center;

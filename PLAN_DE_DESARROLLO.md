@@ -8,7 +8,7 @@ Guía de trabajo del equipo. Resume cómo está armado el proyecto, las convenci
 |---|---|
 | Backend | PHP 8.3 y Laravel 13 |
 | Interfaz | Livewire 4 (páginas multi-archivo en `resources/views/pages`), Flux UI edición gratuita y Tailwind CSS 4 |
-| Base de datos | SQLite en desarrollo y pruebas; MySQL / MariaDB en producción |
+| Base de datos | MySQL / MariaDB en desarrollo y producción; SQLite en memoria para las pruebas automatizadas |
 | Pruebas | Pest 4 |
 | Formato | Laravel Pint |
 
@@ -81,23 +81,31 @@ public function iniciarSesion(AutenticacionService $autenticacion): void
 
 ### 2.3 Base de datos
 
-- Tablas `tb_<entidad>` en singular. Cada campo empieza con el prefijo de tres letras de su tabla.
+- Tablas `tb_<entidad>` en singular. Cada campo empieza con el prefijo de tres letras de su tabla; ningún prefijo se repite.
 - Llave primaria `<prefijo>_codigo`. Llave foránea: prefijo propio + llave referenciada (`pre_usu_codigo`). Si una tabla referencia dos veces a otra, se agrega el rol (`hor_est_codigo_origen`, `hor_est_codigo_destino`).
 - Fechas de auditoría `<prefijo>_fecha_creacion` y `<prefijo>_fecha_actualizacion` (constantes `CREATED_AT` y `UPDATED_AT` del modelo).
 - Nada se borra físicamente: la baja es lógica con `<prefijo>_estado`.
 - Los modelos declaran tabla y llave con `#[Table(name: 'tb_...', key: '..._codigo')]` y escriben las llaves de cada relación.
-- Las tablas internas de Laravel (`sessions`, `cache`, `jobs`, `password_reset_tokens`, `migrations`, etc.) conservan sus nombres.
+- Esquema en tercera forma normal: los valores de dominio viven en catálogos con llave foránea (`tb_perfil`, `tb_categoria`, `tb_dificultad`, `tb_servicio`, `tb_fuente`, `tb_tipo_sincronizacion`, `tb_resultado_sincronizacion`) y no se guardan listas ni JSON en un campo. Los catálogos fijos tienen un enum cuyo valor coincide con el código (`Dificultad::Alta->value === 3`).
+- El informe referencia sus zonas, trenes y pronósticos en `tb_informe_zona`, `tb_informe_horario` y `tb_informe_clima`; solo guarda lo calculado o cotizado al generarlo (recorrido, tiempo y precio del boleto).
+- Nombres de restricciones, sin el `tb_` de la tabla: `uq_<tabla>_<campos>` (`uq_<tabla>` en tablas intermedias), `fk_<tabla>_<tabla referida>[_rol]`, `idx_<tabla>_<propósito>` y `chk_<tabla>_<regla>`. MySQL nombra siempre `PRIMARY` a la llave primaria.
+- Las reglas de dominio (lluvia 0–100, precio ≥ 0, origen ≠ destino, etc.) se validan en la aplicación y, en MySQL / MariaDB, también con restricciones `CHECK`.
+- Tablas técnicas de Laravel fuera de la convención, porque el framework define sus nombres y campos: `sessions`, `cache`, `cache_locks`, `password_reset_tokens` y `migrations`. El sistema no usa colas (`QUEUE_CONNECTION=sync`).
 - Cada cambio de esquema es una migración nueva; no se editan migraciones que ya están en `main`.
 
 | Tabla | Prefijo | Tabla | Prefijo |
 |---|---|---|---|
-| `tb_perfil` | `per_` | `tb_clima` | `cli_` |
-| `tb_usuario` | `usu_` | `tb_horario` | `hor_` |
+| `tb_perfil` | `per_` | `tb_horario` | `hor_` |
+| `tb_usuario` | `usu_` | `tb_servicio` | `ser_` |
 | `tb_categoria` | `cat_` | `tb_informe` | `inf_` |
 | `tb_preferencia` | `pre_` | `tb_informe_categoria` | `ica_` |
-| `tb_estacion` | `est_` | `tb_parametro` | `par_` |
-| `tb_zona_turistica` | `zon_` | `tb_bitacora` | `bit_` |
-| `tb_zona_imagen` | `zim_` | | |
+| `tb_estacion` | `est_` | `tb_informe_zona` | `izo_` |
+| `tb_zona_turistica` | `zon_` | `tb_informe_horario` | `iho_` |
+| `tb_zona_imagen` | `zim_` | `tb_informe_clima` | `icl_` |
+| `tb_dificultad` | `dif_` | `tb_parametro` | `par_` |
+| `tb_clima` | `cli_` | `tb_bitacora` | `bit_` |
+| `tb_fuente` | `fue_` | `tb_tipo_sincronizacion` | `tsi_` |
+| `tb_resultado_sincronizacion` | `res_` | | |
 
 ### 2.4 Nombres
 
@@ -144,7 +152,7 @@ Primero los RF de prioridad Alta (producto mínimo), luego los de prioridad Medi
 ### Etapa 0 — Base del proyecto
 
 - [x] Repositorio en GitHub con la rama `main`.
-- [x] Modelo de datos con prefijos (13 tablas), modelos, factories, seeders y pruebas.
+- [x] Modelo de datos con prefijos (21 tablas en tercera forma normal), modelos, factories, seeders y pruebas.
 - [x] ERS v1.1 alineado con el modelo de datos y el stack.
 - [x] Zona horaria `America/Lima` y traducciones al español.
 
@@ -162,6 +170,7 @@ Primero los RF de prioridad Alta (producto mínimo), luego los de prioridad Medi
 - [x] Tarea programada diaria (RF-13), con la frecuencia tomada de `tb_parametro`.
 - [x] Sincronización manual para el administrador (RF-15).
 - [x] Si una fuente no responde, se conserva el último dato y se muestra su fecha (RNF-09).
+- [x] Bitácora visible en la pantalla de sincronización, con las cargas de zonas de Travel Group Perú (RF-14).
 
 ### Etapa 3 — Administración (RF-16 a RF-20)
 
@@ -170,6 +179,7 @@ Primero los RF de prioridad Alta (producto mínimo), luego los de prioridad Medi
 - [x] Gestión de usuarios para el administrador: alta, baja y cambio de perfil (RF-19).
 - [x] Parámetros generales y catálogo de categorías (RF-20).
 - [x] Autorización por perfil con policies (RNF-12).
+- [x] Mantenimiento de horarios y precios de los trenes para el administrador (Módulo 2).
 
 ### Etapa 4 — Consulta del turista (RF-05 a RF-10)
 
@@ -179,6 +189,9 @@ Primero los RF de prioridad Alta (producto mínimo), luego los de prioridad Medi
 - [x] Ruta de ida y vuelta: distancia total, tiempo según `velocidad_caminata` y dificultad (RF-08), con mapa en Leaflet, marcadores y selección de zonas. Las conexiones del mapa son orientativas; las distancias corresponden al recorrido registrado por Travel Group.
 - [x] Trenes que llegan a la estación, con horario y precio (`Estacion::horariosDeLlegada`).
 - [x] Historial de búsquedas (RF-10).
+- [x] Categorías dentro de la planificación y descarga inmediata del informe, para llegar al primer informe en tres pasos (RNF-02).
+- [x] Tiempo de viaje del tren y fecha de actualización de trenes y clima; sin pronóstico vigente se muestra el último disponible (RF-11, RNF-09).
+- [x] Página de inicio con la propuesta del servicio.
 
 ### Etapa 5 — Informes (RF-21 a RF-24)
 

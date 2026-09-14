@@ -2,53 +2,46 @@
 
 use App\Enums\TipoPerfil;
 use App\Models\Categoria;
+use App\Models\Clima;
 use App\Models\Estacion;
+use App\Models\Horario;
 use App\Models\Informe;
 use App\Models\Usuario;
+use App\Models\ZonaTuristica;
 use App\Services\InformeExportacionService;
 
-test('el turista descarga su informe consolidado como un pdf válido', function () {
+test('el turista abre su informe consolidado como un pdf válido en el navegador', function () {
     $turista = Usuario::factory()->conPerfil(TipoPerfil::UsuarioFinal)->create();
     $estacion = Estacion::factory()->create(['est_nombre' => 'Estación Central']);
     $categoria = Categoria::factory()->create(['cat_nombre' => 'Museos']);
     $informe = Informe::factory()->create([
         'inf_usu_codigo' => $turista->getKey(),
         'inf_est_codigo' => $estacion->getKey(),
-        'inf_contenido' => [
-            'zonas' => [[
-                'nombre' => 'Museo Ferroviario',
-                'categoria' => 'Museos',
-                'distancia_total' => 1600,
-                'tiempo_minutos' => 24,
-                'dificultad' => 'baja',
-            ]],
-            'trenes' => [[
-                'origen' => 'Cusco', 'servicio' => 'Expreso',
-                'salida' => '08:00', 'llegada' => '09:30', 'precio' => '45.00',
-            ]],
-            'clima' => [[
-                'fecha' => '12 sep', 'descripcion' => 'Despejado',
-                'minima' => '8.0', 'maxima' => '20.0', 'lluvia' => 10,
-            ]],
-        ],
     ]);
     $informe->categorias()->attach($categoria);
+    $informe->zonas()->attach(ZonaTuristica::factory()->create([
+        'zon_est_codigo' => $estacion->getKey(),
+        'zon_cat_codigo' => $categoria->getKey(),
+        'zon_nombre' => 'Museo Ferroviario',
+    ]), ['izo_distancia_total' => 1600, 'izo_tiempo_minutos' => 24]);
+    $informe->horarios()->attach(Horario::factory()->create(['hor_est_codigo_destino' => $estacion->getKey()]), ['iho_precio' => 45]);
+    $informe->climas()->attach(Clima::factory()->for($estacion)->create());
 
     $respuesta = $this->actingAs($turista)->get(route('turista.informes.pdf', $informe));
 
     $respuesta->assertOk()
         ->assertHeader('content-type', 'application/pdf')
-        ->assertDownload('informe-'.$informe->getKey().'.pdf');
+        ->assertHeader('content-disposition', 'inline; filename=informe-'.$informe->getKey().'.pdf');
     expect($respuesta->getContent())->toStartWith('%PDF-')->toContain('%%EOF');
 });
 
-test('exporta un informe anterior aunque no tenga zonas trenes ni clima', function () {
+test('abre un informe anterior aunque no tenga zonas trenes ni clima', function () {
     $turista = Usuario::factory()->conPerfil(TipoPerfil::UsuarioFinal)->create();
     $informe = Informe::factory()->create(['inf_usu_codigo' => $turista->getKey()]);
 
     $this->actingAs($turista)->get(route('turista.informes.pdf', $informe))
         ->assertOk()
-        ->assertDownload('informe-'.$informe->getKey().'.pdf');
+        ->assertHeader('content-disposition', 'inline; filename=informe-'.$informe->getKey().'.pdf');
 });
 
 test('un invitado debe iniciar sesión antes de descargar un pdf', function () {
@@ -79,14 +72,10 @@ test('devuelve no encontrado para un informe pdf inexistente', function () {
 
 test('escapa los textos del informe antes de convertirlos a pdf', function () {
     $estacion = Estacion::factory()->create(['est_nombre' => '<script>alert(1)</script>']);
-    $informe = Informe::factory()->create([
-        'inf_est_codigo' => $estacion->getKey(),
-        'inf_contenido' => [
-            'zonas' => [['nombre' => '<img src="file:///etc/passwd">']],
-            'trenes' => [],
-            'clima' => [],
-        ],
-    ]);
+    $informe = Informe::factory()->create(['inf_est_codigo' => $estacion->getKey()]);
+    $informe->zonas()->attach(ZonaTuristica::factory()->create([
+        'zon_nombre' => '<img src="file:///etc/passwd">',
+    ]), ['izo_distancia_total' => 800, 'izo_tiempo_minutos' => 12]);
 
     $html = view('informes.html', [...app(InformeExportacionService::class)->preparar($informe), 'pdf' => true])->render();
 

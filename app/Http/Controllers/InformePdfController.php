@@ -21,6 +21,6 @@ class InformePdfController extends Controller
                 'isPhpEnabled' => false,
                 'isJavascriptEnabled' => false,
             ])
-            ->download(sprintf('informe-%d.pdf', $informe->getKey()));
+            ->stream(sprintf('informe-%d.pdf', $informe->getKey()));
     }
 }

@@ -20,6 +20,11 @@ class InformePolicy
 
     public function exportar(Usuario $usuario, Informe $informe): bool
     {
+        return $this->ver($usuario, $informe);
+    }
+
+    public function ver(Usuario $usuario, Informe $informe): bool
+    {
         return $usuario->tienePerfil(TipoPerfil::UsuarioFinal)
             && $informe->inf_usu_codigo === $usuario->getKey();
     }

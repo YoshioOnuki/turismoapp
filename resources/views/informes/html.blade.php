@@ -15,6 +15,8 @@
         th, td { border: 1px solid #d7dee8; padding: 9px; text-align: left; }
         th { background: #e8eff7; color: #123a63; }
         .empty { color: #667085; font-style: italic; }
+        .nota { color: #475467; margin: 4px 0 0; }
+        .aviso { color: #93370d; }
         @if ($pdf ?? false)
             @page { margin: 32px 36px 44px; }
             body { font-family: "DejaVu Sans", sans-serif; font-size: 10px; margin: 0; }
@@ -43,6 +45,7 @@
     </div>
 
     <h2>Zonas turísticas</h2>
+    <p class="nota">Ruta peatonal de ida y vuelta desde {{ $estacion }}: el recorrido total suma la ida y el regreso.</p>
     <table>
         <thead>
             <tr>
@@ -60,7 +63,7 @@
                     <td>{{ $zona['categoria'] ?? 'Sin categoría' }}</td>
                     <td>{{ number_format((float) ($zona['distancia_total'] ?? 0) / 1000, 1) }} km</td>
                     <td>{{ $zona['tiempo_minutos'] ?? 0 }} min</td>
-                    <td>{{ $zona['dificultad'] ?? 'No indicada' }}</td>
+                    <td>{{ \Illuminate\Support\Str::ucfirst($zona['dificultad'] ?? 'No indicada') }}</td>
                 </tr>
             @empty
                 <tr><td colspan="5" class="empty">No se encontraron zonas para esta planificación.</td></tr>
@@ -69,6 +72,9 @@
     </table>
 
     <h2>Trenes de llegada</h2>
+    @if ($actualizacion['trenes'] ?? null)
+        <p class="nota">Datos de PeruRail actualizados al {{ $actualizacion['trenes'] }}.</p>
+    @endif
     <table>
         <thead>
             <tr>
@@ -76,6 +82,7 @@
                 <th>Servicio</th>
                 <th>Salida</th>
                 <th>Llegada</th>
+                <th>Tiempo de viaje</th>
                 <th>Precio</th>
             </tr>
         </thead>
@@ -86,15 +93,22 @@
                     <td>{{ $tren['servicio'] ?? 'No indicado' }}</td>
                     <td>{{ $tren['salida'] ?? '—' }}</td>
                     <td>{{ $tren['llegada'] ?? '—' }}</td>
+                    <td>{{ $tren['duracion'] ?? '—' }}</td>
                     <td>S/ {{ number_format((float) ($tren['precio'] ?? 0), 2) }}</td>
                 </tr>
             @empty
-                <tr><td colspan="5" class="empty">No hay trenes de llegada registrados.</td></tr>
+                <tr><td colspan="6" class="empty">No hay trenes de llegada registrados.</td></tr>
             @endforelse
         </tbody>
     </table>
 
     <h2>Pronóstico del clima</h2>
+    @unless ($climaVigente ?? true)
+        <p class="nota aviso">El SENAMHI no entregó un pronóstico vigente; se muestra el último pronóstico disponible.</p>
+    @endunless
+    @if ($actualizacion['clima'] ?? null)
+        <p class="nota">Pronóstico del SENAMHI actualizado al {{ $actualizacion['clima'] }}.</p>
+    @endif
     <table>
         <thead>
             <tr>

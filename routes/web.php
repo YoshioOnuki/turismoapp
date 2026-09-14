@@ -29,6 +29,7 @@ Route::middleware('auth')->group(function () {
             Route::livewire('/preferencias', 'pages::turista.preferencias')->name('preferencias');
             Route::livewire('/planificar', 'pages::turista.planificar')->name('planificar');
             Route::livewire('/informes', 'pages::turista.informes')->name('informes');
+            Route::livewire('/informes/{informe}', 'pages::turista.informe-detalle')->name('informes.detalle');
             Route::get('/informes/{informe}/html', InformeHtmlController::class)->name('informes.html');
             Route::get('/informes/{informe}/pdf', InformePdfController::class)->name('informes.pdf');
         });
@@ -49,6 +50,7 @@ Route::middleware('auth')->group(function () {
         ->group(function () {
             Route::livewire('/', 'pages::administracion.panel')->name('panel');
             Route::livewire('/sincronizacion', 'pages::administracion.sincronizacion')->name('sincronizacion');
+            Route::livewire('/horarios', 'pages::administracion.horarios')->name('horarios');
             Route::livewire('/usuarios', 'pages::administracion.usuarios')->name('usuarios');
             Route::livewire('/configuracion', 'pages::administracion.configuracion')->name('configuracion');
             Route::livewire('/reporte-uso', 'pages::administracion.reporte-uso')->name('reporte-uso');

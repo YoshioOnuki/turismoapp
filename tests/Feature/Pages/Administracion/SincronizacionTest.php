@@ -41,15 +41,15 @@ test('el administrador ejecuta una sincronización manual', function () {
     $this->assertDatabaseCount('tb_bitacora', 2);
     $this->assertDatabaseHas('tb_bitacora', [
         'bit_usu_codigo' => $administrador->getKey(),
-        'bit_fuente' => FuenteDatos::PeruRail->value,
-        'bit_tipo' => TipoSincronizacion::Manual->value,
-        'bit_resultado' => ResultadoSincronizacion::Exito->value,
+        'bit_fue_codigo' => FuenteDatos::PeruRail->value,
+        'bit_tsi_codigo' => TipoSincronizacion::Manual->value,
+        'bit_res_codigo' => ResultadoSincronizacion::Exito->value,
     ]);
     $this->assertDatabaseHas('tb_bitacora', [
         'bit_usu_codigo' => $administrador->getKey(),
-        'bit_fuente' => FuenteDatos::Senamhi->value,
-        'bit_tipo' => TipoSincronizacion::Manual->value,
-        'bit_resultado' => ResultadoSincronizacion::Exito->value,
+        'bit_fue_codigo' => FuenteDatos::Senamhi->value,
+        'bit_tsi_codigo' => TipoSincronizacion::Manual->value,
+        'bit_res_codigo' => ResultadoSincronizacion::Exito->value,
     ]);
 });
 
@@ -57,15 +57,15 @@ test('muestra la última actualización exitosa cuando el intento más reciente 
     $this->travelTo(Carbon::parse('2026-09-11 12:00:00'));
     $administrador = Usuario::factory()->conPerfil(TipoPerfil::AdministradorMtc)->create();
     Bitacora::factory()->create([
-        'bit_fuente' => FuenteDatos::PeruRail,
-        'bit_resultado' => ResultadoSincronizacion::Exito,
+        'bit_fue_codigo' => FuenteDatos::PeruRail,
+        'bit_res_codigo' => ResultadoSincronizacion::Exito,
         'bit_fecha_inicio' => now()->subDays(2)->subMinute(),
         'bit_fecha_fin' => now()->subDays(2),
         'bit_registros' => 14,
     ]);
     Bitacora::factory()->create([
-        'bit_fuente' => FuenteDatos::PeruRail,
-        'bit_resultado' => ResultadoSincronizacion::Error,
+        'bit_fue_codigo' => FuenteDatos::PeruRail,
+        'bit_res_codigo' => ResultadoSincronizacion::Error,
         'bit_fecha_inicio' => now()->subHour()->subMinute(),
         'bit_fecha_fin' => now()->subHour(),
         'bit_registros' => 0,
@@ -100,6 +100,9 @@ test('muestra un mensaje seguro cuando ocurre un error inesperado', function () 
                 'registros' => 0,
             ],
         ])
+        ->shouldReceive('bitacoraReciente')
+        ->once()
+        ->andReturn([])
         ->shouldReceive('ejecutar')
         ->once()
         ->andThrow(new RuntimeException('Detalle interno'));
@@ -112,4 +115,37 @@ test('muestra un mensaje seguro cuando ocurre un error inesperado', function () 
         ->assertDontSee('Detalle interno');
 
     Exceptions::assertReported(RuntimeException::class);
+});
+
+test('muestra la bitácora con la fecha, la fuente, los registros y el resultado de cada ejecución', function () {
+    $this->travelTo(Carbon::parse('2026-09-11 12:00:00'));
+    $administrador = Usuario::factory()->conPerfil(TipoPerfil::AdministradorMtc)->create(['usu_nombre' => 'Rosa Quispe']);
+    Bitacora::factory()->create([
+        'bit_usu_codigo' => $administrador->getKey(),
+        'bit_fue_codigo' => FuenteDatos::PeruRail,
+        'bit_tsi_codigo' => TipoSincronizacion::Manual,
+        'bit_res_codigo' => ResultadoSincronizacion::Exito,
+        'bit_fecha_inicio' => now()->subHours(3)->subMinute(),
+        'bit_fecha_fin' => now()->subHours(3),
+        'bit_registros' => 14,
+        'bit_mensaje' => 'Sincronización completada.',
+    ]);
+    Bitacora::factory()->create([
+        'bit_fue_codigo' => FuenteDatos::Senamhi,
+        'bit_tsi_codigo' => TipoSincronizacion::Automatica,
+        'bit_res_codigo' => ResultadoSincronizacion::Error,
+        'bit_fecha_inicio' => now()->subHour()->subMinute(),
+        'bit_fecha_fin' => now()->subHour(),
+        'bit_registros' => 0,
+        'bit_mensaje' => 'El servicio no respondió.',
+    ]);
+
+    Livewire::actingAs($administrador)
+        ->test('pages::administracion.sincronizacion')
+        ->assertSee('Bitácora de sincronización')
+        ->assertSeeInOrder([
+            'Bitácora de sincronización',
+            '11/09/2026 11:00', 'SENAMHI', 'Automática', 'Error', 'El servicio no respondió.',
+            '11/09/2026 09:00', 'PeruRail', 'Manual', '14', 'Éxito', 'Por Rosa Quispe',
+        ]);
 });

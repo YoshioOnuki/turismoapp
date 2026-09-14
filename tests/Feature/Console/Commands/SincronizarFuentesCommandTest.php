@@ -13,8 +13,8 @@ test('ejecuta las fuentes pendientes e informa los registros procesados', functi
     ]);
 
     $this->artisan('sincronizacion:ejecutar')
-        ->expectsOutputToContain('perurail: 14 registros sincronizados.')
-        ->expectsOutputToContain('senamhi: 15 registros sincronizados.')
+        ->expectsOutputToContain('PeruRail: 14 registros sincronizados.')
+        ->expectsOutputToContain('SENAMHI: 15 registros sincronizados.')
         ->assertSuccessful();
 
     $this->assertDatabaseCount('tb_bitacora', 2);
@@ -27,8 +27,8 @@ test('finaliza sin consultar fuentes cuando los datos siguen vigentes', function
     ]);
     foreach ([FuenteDatos::PeruRail, FuenteDatos::Senamhi] as $fuente) {
         Bitacora::factory()->create([
-            'bit_fuente' => $fuente,
-            'bit_resultado' => ResultadoSincronizacion::Exito,
+            'bit_fue_codigo' => $fuente,
+            'bit_res_codigo' => ResultadoSincronizacion::Exito,
             'bit_fecha_fin' => now(),
         ]);
     }

@@ -16,6 +16,11 @@ new #[Title('Sincronización de datos')] class extends Component
      */
     public array $fuentes = [];
 
+    /**
+     * @var list<array{codigo: int, fecha: string, fuente: string, tipo: string, usuario: ?string, registros: int, resultado: string, mensaje: ?string}>
+     */
+    public array $bitacora = [];
+
     public ?string $mensaje = null;
 
     public bool $sincronizacionConIncidencias = false;
@@ -37,7 +42,7 @@ new #[Title('Sincronización de datos')] class extends Component
         try {
             $resultados = $sincronizacion->ejecutar(TipoSincronizacion::Manual, $usuario);
             $this->sincronizacionConIncidencias = collect($resultados)
-                ->contains(fn (Bitacora $bitacora): bool => $bitacora->bit_resultado === ResultadoSincronizacion::Error);
+                ->contains(fn (Bitacora $bitacora): bool => $bitacora->bit_res_codigo === ResultadoSincronizacion::Error);
             $this->mensaje = $this->sincronizacionConIncidencias
                 ? 'La sincronización terminó con incidencias. Se conservaron los últimos datos válidos.'
                 : 'Las fuentes se sincronizaron correctamente.';
@@ -51,5 +56,6 @@ new #[Title('Sincronización de datos')] class extends Component
     private function cargarEstado(SincronizacionService $sincronizacion): void
     {
         $this->fuentes = $sincronizacion->estadoFuentes();
+        $this->bitacora = $sincronizacion->bitacoraReciente();
     }
 };

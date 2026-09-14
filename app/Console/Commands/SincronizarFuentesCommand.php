@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Enums\FuenteDatos;
 use App\Enums\ResultadoSincronizacion;
 use App\Services\SincronizacionService;
 use Illuminate\Console\Attributes\Description;
@@ -27,8 +28,10 @@ class SincronizarFuentesCommand extends Command
 
         $huboErrores = false;
 
-        foreach ($resultados as $fuente => $bitacora) {
-            if ($bitacora->bit_resultado === ResultadoSincronizacion::Error) {
+        foreach ($resultados as $codigo => $bitacora) {
+            $fuente = FuenteDatos::from($codigo)->etiqueta();
+
+            if ($bitacora->bit_res_codigo === ResultadoSincronizacion::Error) {
                 $huboErrores = true;
                 $this->error("{$fuente}: no pudo sincronizarse.");
 

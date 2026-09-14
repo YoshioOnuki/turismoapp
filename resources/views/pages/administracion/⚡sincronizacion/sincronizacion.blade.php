@@ -72,4 +72,51 @@
             </flux:card>
         @endforeach
     </div>
+
+    <section class="space-y-4">
+        <div>
+            <flux:heading size="lg">Bitácora de sincronización</flux:heading>
+            <flux:text class="mt-1">Últimas ejecuciones con su fecha, fuente, registros procesados y resultado.</flux:text>
+        </div>
+
+        <flux:card>
+            <flux:table>
+                <flux:table.columns>
+                    <flux:table.column>Fecha y hora</flux:table.column>
+                    <flux:table.column>Fuente</flux:table.column>
+                    <flux:table.column>Tipo</flux:table.column>
+                    <flux:table.column align="end">Registros</flux:table.column>
+                    <flux:table.column>Resultado</flux:table.column>
+                    <flux:table.column>Detalle</flux:table.column>
+                </flux:table.columns>
+                <flux:table.rows>
+                    @forelse ($bitacora as $registro)
+                        <flux:table.row :key="'bitacora-'.$registro['codigo']">
+                            <flux:table.cell>{{ $registro['fecha'] }}</flux:table.cell>
+                            <flux:table.cell variant="strong">{{ $registro['fuente'] }}</flux:table.cell>
+                            <flux:table.cell>{{ $registro['tipo'] }}</flux:table.cell>
+                            <flux:table.cell align="end">{{ $registro['registros'] }}</flux:table.cell>
+                            <flux:table.cell>
+                                <flux:badge size="sm" :color="$registro['resultado'] === 'exito' ? 'green' : 'red'">
+                                    {{ $registro['resultado'] === 'exito' ? 'Éxito' : 'Error' }}
+                                </flux:badge>
+                            </flux:table.cell>
+                            <flux:table.cell class="whitespace-normal">
+                                <div class="flex max-w-md flex-col gap-1">
+                                    <span>{{ $registro['mensaje'] ?? '—' }}</span>
+                                    @if ($registro['usuario'])
+                                        <span class="text-zinc-500 dark:text-zinc-400">Por {{ $registro['usuario'] }}</span>
+                                    @endif
+                                </div>
+                            </flux:table.cell>
+                        </flux:table.row>
+                    @empty
+                        <flux:table.row>
+                            <flux:table.cell colspan="6">Aún no hay sincronizaciones registradas.</flux:table.cell>
+                        </flux:table.row>
+                    @endforelse
+                </flux:table.rows>
+            </flux:table>
+        </flux:card>
+    </section>
 </div>

@@ -56,6 +56,6 @@ new #[Title('Crear cuenta')] class extends Component
             return;
         }
 
-        $this->redirectIntended(route($usuario->tipoPerfil()->rutaPanel()), navigate: true);
+        $this->redirect(route('turista.preferencias'), navigate: true);
     }
 };

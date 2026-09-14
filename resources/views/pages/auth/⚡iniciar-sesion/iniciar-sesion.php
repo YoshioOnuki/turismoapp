@@ -2,6 +2,7 @@
 
 use App\Exceptions\Autenticacion\CredencialesInvalidasException;
 use App\Exceptions\Autenticacion\DemasiadosIntentosException;
+use App\Enums\TipoPerfil;
 use App\Services\AutenticacionService;
 use Illuminate\Support\Str;
 use Livewire\Attributes\Title;
@@ -55,6 +56,12 @@ new #[Title('Iniciar sesión')] class extends Component
         } catch (Throwable $excepcion) {
             report($excepcion);
             $this->addError('general', 'No pudimos iniciar tu sesión. Inténtalo de nuevo en unos minutos.');
+
+            return;
+        }
+
+        if ($usuario->tienePerfil(TipoPerfil::UsuarioFinal) && ! $usuario->preferencias()->where('cat_estado', true)->exists()) {
+            $this->redirect(route('turista.preferencias'), navigate: true);
 
             return;
         }

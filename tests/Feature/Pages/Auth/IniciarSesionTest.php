@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\TipoPerfil;
+use App\Models\Categoria;
 use App\Models\Usuario;
 use App\Services\AutenticacionService;
 use Illuminate\Support\Collection;
@@ -17,7 +18,7 @@ test('lleva a su panel a quien ya inició sesión', function () {
         ->assertRedirectToRoute('travel-group.panel');
 });
 
-test('inicia la sesión y lleva a cada usuario al panel de su perfil', function (TipoPerfil $perfil, string $panel) {
+test('inicia la sesión y lleva a cada perfil interno a su panel', function (TipoPerfil $perfil, string $panel) {
     $usuario = Usuario::factory()->conPerfil($perfil)->create([
         'usu_correo' => 'ana@turismoapp.test',
         'usu_clave' => 'clave-segura-123',
@@ -30,10 +31,38 @@ test('inicia la sesión y lleva a cada usuario al panel de su perfil', function 
 
     $this->assertAuthenticatedAs($usuario);
 })->with([
-    'usuario final' => [TipoPerfil::UsuarioFinal, 'turista.panel'],
     'Travel Group Perú' => [TipoPerfil::TravelGroup, 'travel-group.panel'],
     'administrador MTC' => [TipoPerfil::AdministradorMtc, 'administracion.panel'],
 ]);
+
+test('lleva al turista sin preferencias a personalizar sus recomendaciones', function () {
+    $usuario = Usuario::factory()->conPerfil(TipoPerfil::UsuarioFinal)->create([
+        'usu_correo' => 'ana@turismoapp.test',
+        'usu_clave' => 'clave-segura-123',
+    ]);
+
+    Livewire::test('pages::auth.iniciar-sesion')
+        ->set(['correo' => 'ana@turismoapp.test', 'clave' => 'clave-segura-123'])
+        ->call('iniciarSesion')
+        ->assertRedirectToRoute('turista.preferencias');
+
+    $this->assertAuthenticatedAs($usuario);
+});
+
+test('lleva al panel al turista que ya configuró sus preferencias', function () {
+    $usuario = Usuario::factory()->conPerfil(TipoPerfil::UsuarioFinal)->create([
+        'usu_correo' => 'ana@turismoapp.test',
+        'usu_clave' => 'clave-segura-123',
+    ]);
+    $usuario->preferencias()->attach(Categoria::factory()->create());
+
+    Livewire::test('pages::auth.iniciar-sesion')
+        ->set(['correo' => 'ana@turismoapp.test', 'clave' => 'clave-segura-123'])
+        ->call('iniciarSesion')
+        ->assertRedirectToRoute('turista.panel');
+
+    $this->assertAuthenticatedAs($usuario);
+});
 
 test('acepta el correo con mayúsculas o espacios alrededor', function () {
     $usuario = Usuario::factory()->create(['usu_correo' => 'ana@turismoapp.test', 'usu_clave' => 'clave-segura-123']);

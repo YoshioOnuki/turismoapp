@@ -2,8 +2,13 @@
 
 namespace App\Services;
 
+use App\Enums\FuenteDatos;
+use App\Enums\ResultadoSincronizacion;
+use App\Enums\TipoSincronizacion;
+use App\Models\Bitacora;
 use App\Models\Categoria;
 use App\Models\Estacion;
+use App\Models\Usuario;
 use App\Models\ZonaTuristica;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
@@ -28,7 +33,8 @@ class ZonaTuristicaService
                 'latitud' => $zona->zon_latitud,
                 'longitud' => $zona->zon_longitud,
                 'distancia' => $zona->zon_distancia,
-                'dificultad' => $zona->zon_dificultad->value,
+                'dificultad_codigo' => $zona->zon_dif_codigo->value,
+                'dificultad' => $zona->zon_dif_codigo->etiqueta(),
                 'estado' => $zona->zon_estado,
                 'estacion' => $zona->estacion->est_nombre,
                 'categoria' => $zona->categoria->cat_nombre,
@@ -49,11 +55,15 @@ class ZonaTuristicaService
     }
 
     /**
+     * Registra o actualiza una zona con sus imágenes y deja constancia de la carga
+     * de Travel Group Perú en la bitácora (RF-14, RF-16).
+     *
      * @param  array<string, mixed>  $datos
      * @param  list<UploadedFile>  $imagenes
      */
-    public function guardar(?int $codigo, array $datos, array $imagenes): ZonaTuristica
+    public function guardar(?int $codigo, array $datos, array $imagenes, ?Usuario $usuario = null): ZonaTuristica
     {
+        $inicio = now();
         $rutas = [];
 
         try {
@@ -61,7 +71,7 @@ class ZonaTuristicaService
                 $rutas[] = $imagen->store('zonas', 'public');
             }
 
-            return DB::transaction(function () use ($codigo, $datos, $rutas): ZonaTuristica {
+            return DB::transaction(function () use ($codigo, $datos, $rutas, $usuario, $inicio): ZonaTuristica {
                 $zona = $codigo === null
                     ? new ZonaTuristica
                     : ZonaTuristica::query()->findOrFail($codigo);
@@ -78,6 +88,17 @@ class ZonaTuristicaService
                         'zim_orden' => $ordenInicial + $indice,
                     ]);
                 }
+
+                Bitacora::create([
+                    'bit_usu_codigo' => $usuario?->getKey(),
+                    'bit_fue_codigo' => FuenteDatos::TravelGroup,
+                    'bit_tsi_codigo' => TipoSincronizacion::Manual,
+                    'bit_fecha_inicio' => $inicio,
+                    'bit_fecha_fin' => now(),
+                    'bit_registros' => 1,
+                    'bit_res_codigo' => ResultadoSincronizacion::Exito,
+                    'bit_mensaje' => ($codigo === null ? 'Zona registrada: ' : 'Zona actualizada: ').$zona->zon_nombre,
+                ]);
 
                 return $zona->load(['estacion', 'categoria', 'imagenes']);
             });

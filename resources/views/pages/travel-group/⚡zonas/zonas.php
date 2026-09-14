@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\Dificultad;
+use App\Models\Usuario;
 use App\Models\ZonaTuristica;
 use App\Services\ZonaTuristicaService;
 use Illuminate\Support\Facades\Gate;
@@ -81,7 +82,7 @@ new #[Title('Zonas turísticas')] class extends Component
         $this->latitud = (string) $zona['latitud'];
         $this->longitud = (string) $zona['longitud'];
         $this->distancia = (string) $zona['distancia'];
-        $this->dificultad = $zona['dificultad'];
+        $this->dificultad = (string) $zona['dificultad_codigo'];
         $this->imagenes = [];
         $this->mostrarFormulario = true;
     }
@@ -100,8 +101,8 @@ new #[Title('Zonas turísticas')] class extends Component
                 'zon_latitud' => (float) $datosValidados['latitud'],
                 'zon_longitud' => (float) $datosValidados['longitud'],
                 'zon_distancia' => (int) $datosValidados['distancia'],
-                'zon_dificultad' => $datosValidados['dificultad'],
-            ], $datosValidados['imagenes']);
+                'zon_dif_codigo' => (int) $datosValidados['dificultad'],
+            ], $datosValidados['imagenes'], $this->usuario());
             $this->mensaje = $this->codigo === null ? 'Zona turística creada.' : 'Zona turística actualizada.';
             $this->mostrarFormulario = false;
             $this->cargarDatos($zonas);
@@ -123,6 +124,14 @@ new #[Title('Zonas turísticas')] class extends Component
             report($excepcion);
             $this->addError('general', 'No fue posible cambiar el estado de la zona turística.');
         }
+    }
+
+    private function usuario(): Usuario
+    {
+        $usuario = auth()->user();
+        abort_unless($usuario instanceof Usuario, 403);
+
+        return $usuario;
     }
 
     private function limpiarFormulario(): void

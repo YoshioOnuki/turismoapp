@@ -40,7 +40,7 @@
                         </flux:table.cell>
                         <flux:table.cell>{{ $zona['estacion'] }}</flux:table.cell>
                         <flux:table.cell>{{ $zona['categoria'] }}</flux:table.cell>
-                        <flux:table.cell>{{ $zona['distancia'] }} m · {{ ucfirst($zona['dificultad']) }}</flux:table.cell>
+                        <flux:table.cell>{{ $zona['distancia'] }} m · {{ $zona['dificultad'] }}</flux:table.cell>
                         <flux:table.cell><flux:badge :color="$zona['estado'] ? 'green' : 'zinc'">{{ $zona['estado'] ? 'Activa' : 'Inactiva' }}</flux:badge></flux:table.cell>
                         <flux:table.cell align="end">
                             <div class="flex justify-end gap-2">
@@ -66,7 +66,7 @@
                 <flux:input wire:model="nombre" label="Nombre" />
                 <flux:select wire:model="estacionCodigo" label="Estación"><flux:select.option value="">Selecciona una estación</flux:select.option>@foreach ($estaciones as $valor => $etiqueta)<flux:select.option :value="$valor">{{ $etiqueta }}</flux:select.option>@endforeach</flux:select>
                 <flux:select wire:model="categoriaCodigo" label="Categoría"><flux:select.option value="">Selecciona una categoría</flux:select.option>@foreach ($categorias as $valor => $etiqueta)<flux:select.option :value="$valor">{{ $etiqueta }}</flux:select.option>@endforeach</flux:select>
-                <flux:select wire:model="dificultad" label="Dificultad"><flux:select.option value="">Selecciona una dificultad</flux:select.option><flux:select.option value="baja">Baja</flux:select.option><flux:select.option value="media">Media</flux:select.option><flux:select.option value="alta">Alta</flux:select.option></flux:select>
+                <flux:select wire:model="dificultad" label="Dificultad"><flux:select.option value="">Selecciona una dificultad</flux:select.option>@foreach (\App\Enums\Dificultad::cases() as $nivel)<flux:select.option :value="$nivel->value" wire:key="dificultad-{{ $nivel->value }}">{{ $nivel->etiqueta() }}</flux:select.option>@endforeach</flux:select>
                 <flux:input wire:model="latitud" type="number" step="0.0000001" label="Latitud" />
                 <flux:input wire:model="longitud" type="number" step="0.0000001" label="Longitud" />
                 <flux:input wire:model="distancia" type="number" min="1" label="Distancia desde la estación (metros)" />

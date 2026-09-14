@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\Dificultad;
 use App\Enums\TipoPerfil;
 use App\Models\Categoria;
 use App\Models\Estacion;
@@ -41,7 +42,7 @@ test('travel group registra y da de baja una zona turística', function () {
         ->set('latitud', '-13.1547')
         ->set('longitud', '-72.5252')
         ->set('distancia', '950')
-        ->set('dificultad', 'media')
+        ->set('dificultad', (string) Dificultad::Media->value)
         ->call('guardar')
         ->assertHasNoErrors()
         ->assertSet('mostrarFormulario', false)
@@ -55,6 +56,7 @@ test('travel group registra y da de baja una zona turística', function () {
     $this->assertDatabaseHas('tb_zona_turistica', [
         'zon_codigo' => $codigo,
         'zon_nombre' => 'Bosque de Nubes',
+        'zon_dif_codigo' => Dificultad::Media->value,
         'zon_estado' => false,
     ]);
 });

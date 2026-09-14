@@ -18,12 +18,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 #[Table(name: 'tb_bitacora', key: 'bit_codigo', timestamps: false)]
 #[Fillable([
     'bit_usu_codigo',
-    'bit_fuente',
-    'bit_tipo',
+    'bit_fue_codigo',
+    'bit_tsi_codigo',
     'bit_fecha_inicio',
     'bit_fecha_fin',
     'bit_registros',
-    'bit_resultado',
+    'bit_res_codigo',
     'bit_mensaje',
 ])]
 class Bitacora extends Model
@@ -39,12 +39,12 @@ class Bitacora extends Model
     protected function casts(): array
     {
         return [
-            'bit_fuente' => FuenteDatos::class,
-            'bit_tipo' => TipoSincronizacion::class,
+            'bit_fue_codigo' => FuenteDatos::class,
+            'bit_tsi_codigo' => TipoSincronizacion::class,
             'bit_fecha_inicio' => 'datetime',
             'bit_fecha_fin' => 'datetime',
             'bit_registros' => 'integer',
-            'bit_resultado' => ResultadoSincronizacion::class,
+            'bit_res_codigo' => ResultadoSincronizacion::class,
         ];
     }
 

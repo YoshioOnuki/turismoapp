@@ -4,10 +4,23 @@ namespace App\Enums;
 
 /**
  * Fuentes externas que integra el sistema; cada sincronización se registra en tb_bitacora (RF-14).
+ * Cada valor coincide con fue_codigo en tb_fuente.
  */
-enum FuenteDatos: string
+enum FuenteDatos: int
 {
-    case PeruRail = 'perurail';
-    case Senamhi = 'senamhi';
-    case TravelGroup = 'travel_group';
+    case PeruRail = 1;
+    case Senamhi = 2;
+    case TravelGroup = 3;
+
+    /**
+     * Nombre visible de la fuente; es el mismo que fue_nombre en tb_fuente.
+     */
+    public function etiqueta(): string
+    {
+        return match ($this) {
+            self::PeruRail => 'PeruRail',
+            self::Senamhi => 'SENAMHI',
+            self::TravelGroup => 'Travel Group Perú',
+        };
+    }
 }

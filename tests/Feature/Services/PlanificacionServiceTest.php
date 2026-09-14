@@ -9,6 +9,7 @@ use App\Models\Parametro;
 use App\Models\Usuario;
 use App\Models\ZonaTuristica;
 use App\Services\PlanificacionService;
+use Illuminate\Support\Carbon;
 
 test('filtra zonas activas por estación preferencias y distancia máxima', function () {
     $usuario = Usuario::factory()->conPerfil(TipoPerfil::UsuarioFinal)->create();
@@ -56,10 +57,9 @@ test('lista los trenes de llegada y el pronóstico de la estación', function ()
         'est_longitud' => -72.2636,
     ]);
     $origen = Estacion::factory()->create(['est_nombre' => 'Estación Origen']);
-    Horario::factory()->create([
+    Horario::factory()->conServicio('Vistadome')->create([
         'hor_est_codigo_origen' => $origen->getKey(),
         'hor_est_codigo_destino' => $estacion->getKey(),
-        'hor_servicio' => 'Vistadome',
         'hor_hora_salida' => '08:00:00',
         'hor_hora_llegada' => '10:30:00',
         'hor_precio' => 250,
@@ -80,7 +80,33 @@ test('lista los trenes de llegada y el pronóstico de la estación', function ()
     ]);
     expect($informacion['trenes'])->toHaveCount(1)
         ->and($informacion['trenes'][0]['origen'])->toBe('Estación Origen')
-        ->and($informacion['trenes'][0]['llegada'])->toBe('10:30');
+        ->and($informacion['trenes'][0]['llegada'])->toBe('10:30')
+        ->and($informacion['trenes'][0]['duracion'])->toBe('2 h 30 min')
+        ->and($informacion['actualizacion']['trenes'])->not->toBeNull();
     expect($informacion['clima'])->toHaveCount(1)
-        ->and($informacion['clima'][0]['descripcion'])->toBe('Cielo despejado');
+        ->and($informacion['clima'][0]['descripcion'])->toBe('Cielo despejado')
+        ->and($informacion['clima_vigente'])->toBeTrue();
+});
+
+test('entrega el último pronóstico disponible con su fecha de actualización si no hay uno vigente', function () {
+    $this->travelTo(Carbon::parse('2026-09-11 08:00:00'));
+    $estacion = Estacion::factory()->create();
+    Clima::factory()->create([
+        'cli_est_codigo' => $estacion->getKey(),
+        'cli_fecha' => today()->subDays(2),
+        'cli_descripcion' => 'Pronóstico antiguo',
+    ]);
+    Clima::factory()->create([
+        'cli_est_codigo' => $estacion->getKey(),
+        'cli_fecha' => today()->subDay(),
+        'cli_descripcion' => 'Último pronóstico',
+    ]);
+    $this->travelTo(Carbon::parse('2026-09-11 10:30:00'));
+
+    $informacion = app(PlanificacionService::class)->informacionEstacion($estacion->getKey());
+
+    expect($informacion['clima_vigente'])->toBeFalse()
+        ->and($informacion['clima'])->toHaveCount(2)
+        ->and($informacion['clima'][1]['descripcion'])->toBe('Último pronóstico')
+        ->and($informacion['actualizacion']['clima'])->toBe('11/09/2026 08:00');
 });

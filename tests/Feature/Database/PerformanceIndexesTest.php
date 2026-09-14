@@ -11,5 +11,5 @@ test('las consultas principales cuentan con índices compuestos', function (stri
     'imágenes ordenadas' => ['tb_zona_imagen', 'idx_zona_imagen_orden'],
     'trenes de llegada' => ['tb_horario', 'idx_horario_llegada_estacion'],
     'historial del turista' => ['tb_informe', 'idx_informe_historial_usuario'],
-    'vigencia de fuentes' => ['tb_bitacora', 'idx_bitacora_estado_fuente'],
+    'vigencia de fuentes' => ['tb_bitacora', 'idx_bitacora_fuente_resultado_fecha'],
 ]);

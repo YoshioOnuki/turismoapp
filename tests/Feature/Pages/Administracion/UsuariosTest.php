@@ -33,3 +33,14 @@ test('un usuario final no puede gestionar usuarios', function () {
 
     $this->actingAs($usuario)->get(route('administracion.usuarios'))->assertForbidden();
 });
+
+test('muestra seleccionado el perfil actual de cada usuario', function () {
+    $administrador = Usuario::factory()->conPerfil(TipoPerfil::AdministradorMtc)->create();
+    Usuario::factory()->conPerfil(TipoPerfil::TravelGroup)->create(['usu_nombre' => 'Gestor de zonas']);
+
+    $html = Livewire::actingAs($administrador)->test('pages::administracion.usuarios')->html();
+
+    expect($html)
+        ->toMatch('/<option(?=[^>]*value="'.TipoPerfil::AdministradorMtc->value.'")(?=[^>]*selected)[^>]*>\s*Administrador MTC/')
+        ->toMatch('/<option(?=[^>]*value="'.TipoPerfil::TravelGroup->value.'")(?=[^>]*selected)[^>]*>\s*Travel Group Perú/');
+});

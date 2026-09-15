@@ -35,7 +35,7 @@
                         <flux:table.cell>
                             <flux:select size="sm" :value="$usuario['perfil']" wire:change="cambiarPerfil({{ $usuario['codigo'] }}, $event.target.value)" :disabled="$usuario['codigo'] === auth()->id()">
                                 @foreach (\App\Enums\TipoPerfil::cases() as $tipoPerfil)
-                                    <flux:select.option :value="$tipoPerfil->value">{{ $tipoPerfil->etiqueta() }}</flux:select.option>
+                                    <flux:select.option :value="$tipoPerfil->value" :selected="$tipoPerfil->value === $usuario['perfil']">{{ $tipoPerfil->etiqueta() }}</flux:select.option>
                                 @endforeach
                             </flux:select>
                         </flux:table.cell>

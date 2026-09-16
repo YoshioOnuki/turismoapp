@@ -57,11 +57,9 @@ return new class extends Migration
     public function up(): void
     {
         foreach (self::UNICOS as $tabla => $indices) {
-            Schema::table($tabla, function (Blueprint $table) use ($indices) {
-                foreach ($indices as $anterior => $nuevo) {
-                    $table->renameIndex($anterior, $nuevo);
-                }
-            });
+            foreach ($indices as $anterior => $nuevo) {
+                $this->renombrarIndiceUnico($tabla, $anterior, $nuevo);
+            }
         }
 
         Schema::table('tb_zona_turistica', function (Blueprint $table) {
@@ -137,11 +135,27 @@ return new class extends Migration
         });
 
         foreach (self::UNICOS as $tabla => $indices) {
-            Schema::table($tabla, function (Blueprint $table) use ($indices) {
-                foreach ($indices as $anterior => $nuevo) {
-                    $table->renameIndex($nuevo, $anterior);
-                }
-            });
+            foreach ($indices as $anterior => $nuevo) {
+                $this->renombrarIndiceUnico($tabla, $nuevo, $anterior);
+            }
         }
+    }
+
+    /**
+     * MariaDB 10.4 no admite RENAME INDEX. El reemplazo se crea primero para conservar
+     * la unicidad y el soporte de las llaves foráneas mientras se retira el anterior.
+     */
+    private function renombrarIndiceUnico(string $tabla, string $anterior, string $nuevo): void
+    {
+        $indice = collect(Schema::getIndexes($tabla))
+            ->firstOrFail(fn (array $indice): bool => $indice['name'] === $anterior && $indice['unique']);
+
+        Schema::table($tabla, function (Blueprint $table) use ($indice, $nuevo) {
+            $table->unique($indice['columns'], $nuevo);
+        });
+
+        Schema::table($tabla, function (Blueprint $table) use ($anterior) {
+            $table->dropUnique($anterior);
+        });
     }
 };
